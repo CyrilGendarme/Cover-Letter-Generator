@@ -1,0 +1,16 @@
+[
+  {
+    "name": "CPP",
+    "text_parts": [
+      "cpp",
+      "c++"
+    ]
+  },
+  {
+    "name": "Java",
+    "text_parts": [
+      "java",
+      "kotlin"
+    ]
+  }
+]
