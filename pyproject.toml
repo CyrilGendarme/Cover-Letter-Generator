@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cover-letter-generator"
+version = "0.1.0"
+description = "Desktop GUI app for generating cover letters"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Your Name" }
+]
+dependencies = [
+    "python-docx>=1.1.2",
+    "reportlab>=4.2.2"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2"
+]
+
+[project.scripts]
+cover-letter-generator = "cover_letter_generator.main:main"
+
+[tool.setuptools]
+packages = ["cover_letter_generator", "cover_letter_generator.gui", "cover_letter_generator.services", "cover_letter_generator.models"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
