@@ -16,6 +16,7 @@ class JsonDataStore:
         self._data_dir = base_dir or (root_dir / "data")
         self._techs_file = self._data_dir / "techs.json"
         self._text_parts_file = self._data_dir / "text_parts.json"
+        self._settings_file = self._data_dir / "settings.json"
         self._ensure_files_exist()
 
     def _ensure_files_exist(self) -> None:
@@ -24,6 +25,8 @@ class JsonDataStore:
             self._write_json(self._techs_file, [])
         if not self._text_parts_file.exists():
             self._write_json(self._text_parts_file, [])
+        if not self._settings_file.exists():
+            self._write_settings({})
 
     def _read_json(self, path: Path) -> list[dict[str, object]]:
         try:
@@ -35,6 +38,18 @@ class JsonDataStore:
 
     def _write_json(self, path: Path, payload: list[dict[str, object]]) -> None:
         with path.open("w", encoding="utf-8") as file:
+            json.dump(payload, file, indent=2)
+
+    def _read_settings(self) -> dict[str, object]:
+        try:
+            with self._settings_file.open("r", encoding="utf-8") as file:
+                raw = json.load(file)
+        except (json.JSONDecodeError, OSError):
+            return {}
+        return raw if isinstance(raw, dict) else {}
+
+    def _write_settings(self, payload: dict[str, object]) -> None:
+        with self._settings_file.open("w", encoding="utf-8") as file:
             json.dump(payload, file, indent=2)
 
     def load_techs(self) -> list[Tech]:
@@ -114,3 +129,13 @@ class JsonDataStore:
         text_parts.pop(index)
         self.save_text_parts(text_parts)
         return True
+
+    def load_export_directory(self) -> str:
+        settings = self._read_settings()
+        value = settings.get("export_directory", "")
+        return str(value) if value else ""
+
+    def save_export_directory(self, export_directory: str) -> None:
+        settings = self._read_settings()
+        settings["export_directory"] = export_directory
+        self._write_settings(settings)

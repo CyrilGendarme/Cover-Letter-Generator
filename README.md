@@ -64,6 +64,7 @@ pytest
 - Business logic is in `cover_letter_generator/services`.
 - `CoverLetterApp` in `cover_letter_generator/app.py` wires dependencies.
 - The `Configuration` tab lets you load/add/modify/remove `Tech` and `TextPart` entities.
+- Text part editing supports side-by-side English and French values (`text` and `french_text`).
 - Persistence is JSON-based in `data/techs.json` and `data/text_parts.json`.
 
 ## Generator Workflow (3 Screens)
@@ -73,7 +74,7 @@ pytest
 	- Click `Extract keywords` to prefill a checkable keyword list.
 2. Screen 2 - Generation Setup:
 	- Fill position name and company name.
-	- Select language (`English` or `French`).
+	- Select output language(s) with two checkboxes: `English` and `French` (English checked by default).
 	- Review selected key techs.
 3. Screen 3 - Output:
 	- Generated text ready to copy/paste.

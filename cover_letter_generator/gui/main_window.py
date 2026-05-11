@@ -1,9 +1,15 @@
 """Main Tkinter window and widgets."""
 
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import ttk
 
-from cover_letter_generator.models.text_parts import IntroOutroKind, IntroOutroTextPart, Tech, TextPart, TextPartTech
+from cover_letter_generator.models.text_parts import (
+    TextPartKind,
+    TextPartNonTech,
+    Tech,
+    TextPart,
+    TextPartTech,
+)
 from cover_letter_generator.services.cover_letter_service import CoverLetterService
 from cover_letter_generator.services.json_data_store import JsonDataStore
 
@@ -22,15 +28,30 @@ class MainWindow:
         self._position_name_var = tk.StringVar()
         self._position_company_var = tk.StringVar()
         self._status_var = tk.StringVar(value="Ready")
+        self._include_english_var = tk.BooleanVar(value=True)
+        self._include_french_var = tk.BooleanVar(value=False)
+
+        # Export directory - default to Downloads
+        from pathlib import Path
+
+        default_export_dir = str(Path.home() / "Downloads")
+        self._export_directory_var = tk.StringVar(value=default_export_dir)
 
         self._tech_name_var = tk.StringVar()
         self._techs: list[Tech] = []
 
         self._text_parts: list[TextPart] = []
+        self._text_part_name_var = tk.StringVar()
         self._text_part_association_var = tk.StringVar(value="none")
-        self._text_part_enum_var = tk.StringVar(value=IntroOutroKind.BODY.value)
+        self._text_part_enum_var = tk.StringVar(value=TextPartKind.INTRO.value)
         self._text_part_tech_var = tk.StringVar(value="")
+        self._text_part_always_include_var = tk.BooleanVar(value=False)
         self._selected_tech_part_vars: dict[int, tk.BooleanVar] = {}
+        self._selected_non_tech_part_vars: dict[
+            TextPartKind, dict[int, tk.BooleanVar]
+        ] = {}
+
+        self._screens: ttk.Notebook | None = None
 
         self._build_layout()
         self._load_configuration()
@@ -65,20 +86,21 @@ class MainWindow:
         status.pack(anchor=tk.W, pady=(8, 0))
 
     def _build_generator_tab(self, parent: ttk.Frame) -> None:
-        screens = ttk.Notebook(parent)
-        screens.pack(fill=tk.BOTH, expand=True)
+        self._screens = ttk.Notebook(parent)
+        self._screens.pack(fill=tk.BOTH, expand=True)
 
-        screen_1 = ttk.Frame(screens, padding=8)
-        screen_2 = ttk.Frame(screens, padding=8)
-        screen_3 = ttk.Frame(screens, padding=8)
+        screen_1 = ttk.Frame(self._screens, padding=8)
+        screen_2 = ttk.Frame(self._screens, padding=8)
+        screen_3 = ttk.Frame(self._screens, padding=8)
 
-        screens.add(screen_1, text="1) Job Description")
-        screens.add(screen_2, text="2) Generation Setup")
-        screens.add(screen_3, text="3) Output")
+        self._screens.add(screen_1, text="1) Job Description")
+        self._screens.add(screen_2, text="2) Generation Setup")
+        self._screens.add(screen_3, text="3) Output")
 
         self._build_screen_job_description(screen_1)
         self._build_screen_generation_setup(screen_2)
         self._build_screen_output(screen_3)
+        self._screens.select(0)
 
     def _build_screen_job_description(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(0, weight=1)
@@ -95,14 +117,33 @@ class MainWindow:
 
     def _build_screen_generation_setup(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(1, weight=1)
-        parent.rowconfigure(2, weight=1)
+        parent.rowconfigure(3, weight=1)
+        parent.rowconfigure(4, weight=1)
 
         self._add_labeled_entry(parent, "Job title", self._position_name_var, row=0)
         self._add_labeled_entry(parent, "Company name", self._position_company_var, row=1)
 
-        ttk.Label(parent, text="TextPartTech items").grid(row=2, column=0, sticky=tk.NW, padx=(0, 8), pady=4)
+        ttk.Label(parent, text="Output language(s)").grid(
+            row=2, column=0, sticky=tk.W, padx=(0, 8), pady=4
+        )
+        language_frame = ttk.Frame(parent)
+        language_frame.grid(row=2, column=1, sticky=tk.W, pady=4)
+        ttk.Checkbutton(
+            language_frame,
+            text="English",
+            variable=self._include_english_var,
+        ).pack(side=tk.LEFT)
+        ttk.Checkbutton(
+            language_frame,
+            text="French",
+            variable=self._include_french_var,
+        ).pack(side=tk.LEFT, padx=(12, 0))
+
+        ttk.Label(parent, text="TextPartTech items").grid(
+            row=3, column=0, sticky=tk.NW, padx=(0, 8), pady=4
+        )
         tech_parts_frame = ttk.LabelFrame(parent, text="Check the parts to include")
-        tech_parts_frame.grid(row=2, column=1, sticky=tk.NSEW, pady=4)
+        tech_parts_frame.grid(row=3, column=1, sticky=tk.NSEW, pady=4)
         tech_parts_frame.columnconfigure(0, weight=1)
         tech_parts_frame.rowconfigure(0, weight=1)
 
@@ -118,8 +159,36 @@ class MainWindow:
         self._tech_parts_check_frame.bind("<Configure>", self._on_tech_parts_frame_configure)
         self._tech_parts_canvas.bind("<Configure>", self._on_tech_parts_canvas_configure)
 
+        ttk.Label(parent, text="TextPartNonTech options").grid(
+            row=4, column=0, sticky=tk.NW, padx=(0, 8), pady=4
+        )
+        non_tech_frame = ttk.LabelFrame(parent, text="Select one per kind")
+        non_tech_frame.grid(row=4, column=1, sticky=tk.NSEW, pady=4)
+        non_tech_frame.columnconfigure(0, weight=1)
+        non_tech_frame.rowconfigure(0, weight=1)
+
+        self._non_tech_canvas = tk.Canvas(
+            non_tech_frame, borderwidth=0, highlightthickness=0
+        )
+        self._non_tech_canvas.grid(row=0, column=0, sticky=tk.NSEW)
+
+        non_tech_scrollbar = ttk.Scrollbar(
+            non_tech_frame, orient=tk.VERTICAL, command=self._non_tech_canvas.yview
+        )
+        non_tech_scrollbar.grid(row=0, column=1, sticky=tk.NS)
+        self._non_tech_canvas.configure(yscrollcommand=non_tech_scrollbar.set)
+
+        self._non_tech_check_frame = ttk.Frame(self._non_tech_canvas)
+        self._non_tech_canvas_window = self._non_tech_canvas.create_window(
+            (0, 0), window=self._non_tech_check_frame, anchor="nw"
+        )
+        self._non_tech_check_frame.bind(
+            "<Configure>", self._on_non_tech_frame_configure
+        )
+        self._non_tech_canvas.bind("<Configure>", self._on_non_tech_canvas_configure)
+
         actions = ttk.Frame(parent)
-        actions.grid(row=3, column=1, sticky=tk.W, pady=(8, 0))
+        actions.grid(row=5, column=1, sticky=tk.W, pady=(8, 0))
         ttk.Button(actions, text="Refresh matches", command=self._prepare_text_part_matches).pack(side=tk.LEFT)
         ttk.Button(actions, text="Generate text", command=self._on_generate).pack(side=tk.LEFT, padx=(6, 0))
 
@@ -139,13 +208,34 @@ class MainWindow:
     def _build_configuration_tab(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(0, weight=1)
         parent.columnconfigure(1, weight=1)
-        parent.rowconfigure(0, weight=1)
+        parent.rowconfigure(0, weight=0)
+        parent.rowconfigure(1, weight=1)
+
+        # Export directory section
+        export_frame = ttk.LabelFrame(parent, text="Export Settings")
+        export_frame.grid(
+            row=0, column=0, columnspan=2, sticky=tk.EW, padx=6, pady=(6, 12)
+        )
+        export_frame.columnconfigure(1, weight=1)
+
+        ttk.Label(export_frame, text="Export directory:").grid(
+            row=0, column=0, sticky=tk.W, padx=8, pady=8
+        )
+        ttk.Entry(export_frame, textvariable=self._export_directory_var).grid(
+            row=0, column=1, sticky=tk.EW, padx=(0, 6), pady=8
+        )
+        ttk.Button(
+            export_frame, text="Browse", command=self._browse_export_directory
+        ).grid(row=0, column=2, padx=(0, 6), pady=8)
+        ttk.Button(export_frame, text="Open", command=self._open_export_directory).grid(
+            row=0, column=3, padx=(0, 8), pady=8
+        )
 
         tech_frame = ttk.LabelFrame(parent, text="Tech Entities")
-        tech_frame.grid(row=0, column=0, sticky=tk.NSEW, padx=(0, 6))
+        tech_frame.grid(row=1, column=0, sticky=tk.NSEW, padx=(0, 6))
 
         text_part_frame = ttk.LabelFrame(parent, text="TextPart Entities")
-        text_part_frame.grid(row=0, column=1, sticky=tk.NSEW, padx=(6, 0))
+        text_part_frame.grid(row=1, column=1, sticky=tk.NSEW, padx=(6, 0))
 
         self._build_tech_editor(tech_frame)
         self._build_text_part_editor(text_part_frame)
@@ -179,13 +269,34 @@ class MainWindow:
         self._text_part_list.grid(row=0, column=0, sticky=tk.NSEW, padx=8, pady=(8, 4))
         self._text_part_list.bind("<<ListboxSelect>>", self._on_text_part_selected)
 
-        ttk.Label(parent, text="Text").grid(row=1, column=0, sticky=tk.W, padx=8)
-        self._text_part_text = tk.Text(parent, height=12, wrap=tk.WORD)
-        self._text_part_text.grid(row=2, column=0, sticky=tk.EW, padx=8, pady=(2, 8))
+        ttk.Label(parent, text="Name (optional)").grid(
+            row=1, column=0, sticky=tk.W, padx=8
+        )
+        ttk.Entry(parent, textvariable=self._text_part_name_var).grid(
+            row=2, column=0, sticky=tk.EW, padx=8
+        )
 
-        ttk.Label(parent, text="Association type").grid(row=3, column=0, sticky=tk.W, padx=8)
+        ttk.Label(parent, text="Texts (English / French)").grid(
+            row=3, column=0, sticky=tk.W, padx=8
+        )
+        text_frame = ttk.Frame(parent)
+        text_frame.grid(row=4, column=0, sticky=tk.NSEW, padx=8, pady=(2, 8))
+        text_frame.columnconfigure(0, weight=1)
+        text_frame.columnconfigure(1, weight=1)
+
+        ttk.Label(text_frame, text="English").grid(row=0, column=0, sticky=tk.W)
+        ttk.Label(text_frame, text="French").grid(row=0, column=1, sticky=tk.W)
+
+        self._text_part_text = tk.Text(text_frame, height=12, wrap=tk.WORD)
+        self._text_part_text.grid(row=1, column=0, sticky=tk.NSEW, padx=(0, 6))
+        self._text_part_french_text = tk.Text(text_frame, height=12, wrap=tk.WORD)
+        self._text_part_french_text.grid(row=1, column=1, sticky=tk.NSEW, padx=(6, 0))
+
+        ttk.Label(parent, text="Association type").grid(
+            row=5, column=0, sticky=tk.W, padx=8
+        )
         association_frame = ttk.Frame(parent)
-        association_frame.grid(row=4, column=0, sticky=tk.W, padx=8, pady=(2, 6))
+        association_frame.grid(row=6, column=0, sticky=tk.W, padx=8, pady=(2, 6))
         ttk.Radiobutton(
             association_frame,
             text="None",
@@ -209,19 +320,19 @@ class MainWindow:
         ).pack(side=tk.LEFT, padx=(8, 0))
 
         enum_row = ttk.Frame(parent)
-        enum_row.grid(row=5, column=0, sticky=tk.W, padx=8, pady=(0, 4))
+        enum_row.grid(row=7, column=0, sticky=tk.W, padx=8, pady=(0, 4))
         ttk.Label(enum_row, text="Enum value").pack(side=tk.LEFT)
         self._text_part_enum_combo = ttk.Combobox(
             enum_row,
             state="readonly",
-            values=[item.value for item in IntroOutroKind],
+            values=[item.value for item in TextPartKind],
             textvariable=self._text_part_enum_var,
             width=12,
         )
         self._text_part_enum_combo.pack(side=tk.LEFT, padx=(8, 0))
 
         tech_row = ttk.Frame(parent)
-        tech_row.grid(row=6, column=0, sticky=tk.W, padx=8, pady=(0, 8))
+        tech_row.grid(row=8, column=0, sticky=tk.W, padx=8, pady=(0, 8))
         ttk.Label(tech_row, text="Tech key").pack(side=tk.LEFT)
         self._text_part_tech_combo = ttk.Combobox(
             tech_row,
@@ -231,8 +342,17 @@ class MainWindow:
         )
         self._text_part_tech_combo.pack(side=tk.LEFT, padx=(8, 0))
 
+        self._text_part_always_include_check = ttk.Checkbutton(
+            parent,
+            text="Always include in letter (hidden from checklist)",
+            variable=self._text_part_always_include_var,
+        )
+        self._text_part_always_include_check.grid(
+            row=9, column=0, sticky=tk.W, padx=8, pady=(0, 8)
+        )
+
         buttons = ttk.Frame(parent)
-        buttons.grid(row=7, column=0, sticky=tk.W, padx=8, pady=(0, 8))
+        buttons.grid(row=10, column=0, sticky=tk.W, padx=8, pady=(0, 8))
         ttk.Button(buttons, text="Load", command=self._load_configuration).pack(side=tk.LEFT)
         ttk.Button(buttons, text="Add / Modify", command=self._on_upsert_text_part).pack(side=tk.LEFT, padx=(6, 0))
         ttk.Button(buttons, text="Remove", command=self._on_remove_text_part).pack(side=tk.LEFT, padx=(6, 0))
@@ -241,10 +361,14 @@ class MainWindow:
     def _load_configuration(self) -> None:
         self._techs = self._data_store.load_techs()
         self._text_parts = self._data_store.load_text_parts()
+        saved_export_directory = self._data_store.load_export_directory()
+        if saved_export_directory:
+            self._export_directory_var.set(saved_export_directory)
         self._refresh_tech_list()
         self._refresh_text_part_list()
         self._refresh_text_part_tech_keys()
         self._refresh_text_part_tech_candidates()
+        self._refresh_non_tech_candidates()
         self._status_var.set("Configuration loaded from JSON files")
 
     def _refresh_text_part_tech_keys(self) -> None:
@@ -256,7 +380,7 @@ class MainWindow:
             self._text_part_tech_var.set("")
 
     def _refresh_text_part_tech_candidates(self) -> None:
-        tech_parts = self._get_text_part_tech_items()
+        tech_parts = self._get_checkable_text_part_tech_items()
         current_states = {
             index: variable.get() for index, variable in self._selected_tech_part_vars.items()
         }
@@ -264,6 +388,30 @@ class MainWindow:
             index: tk.BooleanVar(value=current_states.get(index, False)) for index, _part in tech_parts
         }
         self._render_text_part_tech_checkboxes(tech_parts)
+
+    def _refresh_non_tech_candidates(self) -> None:
+        grouped = self._get_non_tech_part_items_grouped()
+        current_states = {
+            kind: {index: variable.get() for index, variable in kind_vars.items()}
+            for kind, kind_vars in self._selected_non_tech_part_vars.items()
+        }
+
+        self._selected_non_tech_part_vars = {}
+        for kind, items in grouped.items():
+            kind_vars: dict[int, tk.BooleanVar] = {}
+            any_selected = False
+            for index, _part in items:
+                selected = current_states.get(kind, {}).get(index, False)
+                kind_vars[index] = tk.BooleanVar(value=selected)
+                any_selected = any_selected or selected
+
+            if items and not any_selected:
+                first_index = items[0][0]
+                kind_vars[first_index].set(True)
+
+            self._selected_non_tech_part_vars[kind] = kind_vars
+
+        self._render_non_tech_checkboxes(grouped)
 
     def _refresh_tech_list(self) -> None:
         self._tech_list.delete(0, tk.END)
@@ -277,7 +425,10 @@ class MainWindow:
             if len(preview) > 70:
                 preview = f"{preview[:67]}..."
             label = self._format_text_part_association(part)
-            self._text_part_list.insert(tk.END, f"[{label}] {preview or '<empty>'}")
+            identifier = self._text_part_identifier(part)
+            self._text_part_list.insert(
+                tk.END, f"[{label}] {identifier} -> {preview or '<empty>'}"
+            )
 
     def _get_text_part_tech_items(self) -> list[tuple[int, TextPartTech]]:
         items: list[tuple[int, TextPartTech]] = []
@@ -286,17 +437,44 @@ class MainWindow:
                 items.append((index, part))
         return items
 
-    def _get_intro_parts(self) -> list[IntroOutroTextPart]:
+    def _get_checkable_text_part_tech_items(self) -> list[tuple[int, TextPartTech]]:
         return [
-            part for part in self._text_parts
-            if isinstance(part, IntroOutroTextPart) and part.intro_outro == IntroOutroKind.INTRO
+            (index, part)
+            for index, part in self._get_text_part_tech_items()
+            if not part.always_include
         ]
 
-    def _get_outro_parts(self) -> list[IntroOutroTextPart]:
-        return [
-            part for part in self._text_parts
-            if isinstance(part, IntroOutroTextPart) and part.intro_outro == IntroOutroKind.OUTRO
-        ]
+    def _get_non_tech_part_items_grouped(
+        self,
+    ) -> dict[TextPartKind, list[tuple[int, TextPartNonTech]]]:
+        grouped: dict[TextPartKind, list[tuple[int, TextPartNonTech]]] = {}
+        for index, part in enumerate(self._text_parts):
+            if not isinstance(part, TextPartNonTech):
+                continue
+            grouped.setdefault(part.text_part_kind, []).append((index, part))
+        return grouped
+
+    def _get_intro_parts(self) -> list[TextPartNonTech]:
+        selected = self._get_selected_non_tech_parts(TextPartKind.INTRO)
+        return selected
+
+    def _get_outro_parts(self) -> list[TextPartNonTech]:
+        selected = self._get_selected_non_tech_parts(TextPartKind.OUTRO)
+        return selected
+
+    def _get_selected_non_tech_parts_all(self) -> list[TextPartNonTech]:
+        selected: list[TextPartNonTech] = []
+        for kind in TextPartKind:
+            selected.extend(self._get_selected_non_tech_parts(kind))
+        return selected
+
+    def _get_selected_non_tech_parts(self, kind: TextPartKind) -> list[TextPartNonTech]:
+        selected: list[TextPartNonTech] = []
+        kind_vars = self._selected_non_tech_part_vars.get(kind, {})
+        for index, variable in kind_vars.items():
+            if variable.get() and isinstance(self._text_parts[index], TextPartNonTech):
+                selected.append(self._text_parts[index])
+        return selected
 
     def _render_text_part_tech_checkboxes(self, tech_parts: list[tuple[int, TextPartTech]]) -> None:
         for child in self._tech_parts_check_frame.winfo_children():
@@ -310,12 +488,52 @@ class MainWindow:
             return
 
         for index, part in tech_parts:
-            label = f"{part.tech.name}: {self._truncate_text(part.text)}"
+            identifier = self._text_part_identifier(part)
+            label = f"{identifier}: {self._truncate_text(part.text)}"
             ttk.Checkbutton(
                 self._tech_parts_check_frame,
                 text=label,
                 variable=self._selected_tech_part_vars[index],
             ).pack(anchor=tk.W, padx=6, pady=2)
+
+    def _render_non_tech_checkboxes(
+        self, grouped: dict[TextPartKind, list[tuple[int, TextPartNonTech]]]
+    ) -> None:
+        for child in self._non_tech_check_frame.winfo_children():
+            child.destroy()
+
+        if not grouped:
+            ttk.Label(
+                self._non_tech_check_frame,
+                text="No TextPartNonTech items configured yet.",
+            ).pack(anchor=tk.W, padx=6, pady=6)
+            return
+
+        for kind in TextPartKind:
+            entries = grouped.get(kind, [])
+            if not entries:
+                continue
+
+            kind_frame = ttk.LabelFrame(
+                self._non_tech_check_frame, text=f"{kind.value.title()} options"
+            )
+            kind_frame.pack(fill=tk.X, padx=6, pady=4)
+
+            for index, part in entries:
+                checkbox = ttk.Checkbutton(
+                    kind_frame,
+                    text=f"{self._text_part_identifier(part)}: {self._truncate_text(part.text, limit=100)}",
+                    variable=self._selected_non_tech_part_vars[kind][index],
+                    command=lambda selected_index=index, selected_kind=kind: self._on_non_tech_selected(
+                        selected_kind, selected_index
+                    ),
+                )
+                checkbox.pack(anchor=tk.W, padx=6, pady=2)
+
+    def _on_non_tech_selected(self, kind: TextPartKind, selected_index: int) -> None:
+        kind_vars = self._selected_non_tech_part_vars.get(kind, {})
+        for index, variable in kind_vars.items():
+            variable.set(index == selected_index)
 
     def _truncate_text(self, text: str, limit: int = 80) -> str:
         cleaned = text.replace("\n", " ").strip()
@@ -325,10 +543,14 @@ class MainWindow:
 
     def _format_text_part_association(self, part: TextPart) -> str:
         if isinstance(part, TextPartTech):
-            return f"tech:{part.tech.name}"
-        if isinstance(part, IntroOutroTextPart):
-            return f"enum:{part.intro_outro.value}"
+            mode = "always" if part.always_include else "checkable"
+            return f"tech:{part.tech.name}:{mode}"
+        if isinstance(part, TextPartNonTech):
+            return f"enum:{part.text_part_kind.value}"
         return "none"
+
+    def _text_part_identifier(self, part: TextPart) -> str:
+        return part.identifier()
 
     def _on_tech_selected(self, _event: tk.Event) -> None:
         index = self._get_selected_index(self._tech_list)
@@ -344,17 +566,23 @@ class MainWindow:
         if index is None:
             return
         selected = self._text_parts[index]
+        self._text_part_name_var.set(selected.name)
         self._text_part_text.delete("1.0", tk.END)
         self._text_part_text.insert("1.0", selected.text)
+        self._text_part_french_text.delete("1.0", tk.END)
+        self._text_part_french_text.insert("1.0", selected.french_text)
 
         if isinstance(selected, TextPartTech):
             self._text_part_association_var.set("tech")
             self._text_part_tech_var.set(selected.tech.name)
-        elif isinstance(selected, IntroOutroTextPart):
+            self._text_part_always_include_var.set(selected.always_include)
+        elif isinstance(selected, TextPartNonTech):
             self._text_part_association_var.set("enum")
-            self._text_part_enum_var.set(selected.intro_outro.value)
+            self._text_part_enum_var.set(selected.text_part_kind.value)
+            self._text_part_always_include_var.set(False)
         else:
             self._text_part_association_var.set("none")
+            self._text_part_always_include_var.set(False)
         self._toggle_text_part_association_inputs()
 
     def _on_upsert_tech(self) -> None:
@@ -382,8 +610,11 @@ class MainWindow:
             self._status_var.set("Could not remove selected tech")
 
     def _on_upsert_text_part(self) -> None:
-        text = self._text_part_text.get("1.0", tk.END).strip()
-        if not text:
+        name = self._text_part_name_var.get().strip()
+        # Use end-1c to drop Tkinter's implicit trailing newline while preserving user spacing.
+        text = self._text_part_text.get("1.0", "end-1c")
+        french_text = self._text_part_french_text.get("1.0", "end-1c")
+        if not text.strip():
             self._status_var.set("TextPart text is required")
             return
 
@@ -393,15 +624,26 @@ class MainWindow:
             if not tech_key:
                 self._status_var.set("Select a tech key for TextPartTech association")
                 return
-            text_part: TextPart = TextPartTech(text=text, tech=Tech(name=tech_key))
+            text_part = TextPartTech(
+                text=text,
+                name=name,
+                french_text=french_text,
+                tech=Tech(name=tech_key),
+                always_include=self._text_part_always_include_var.get(),
+            )
         elif association == "enum":
             enum_value = self._text_part_enum_var.get().strip().lower()
-            if enum_value not in {item.value for item in IntroOutroKind}:
+            if enum_value not in {item.value for item in TextPartKind}:
                 self._status_var.set("Select a valid enum value")
                 return
-            text_part = IntroOutroTextPart(text=text, intro_outro=IntroOutroKind(enum_value))
+            text_part = TextPartNonTech(
+                text=text,
+                name=name,
+                french_text=french_text,
+                text_part_kind=TextPartKind(enum_value),
+            )
         else:
-            text_part = TextPart(text=text)
+            text_part = TextPart(text=text, name=name, french_text=french_text)
 
         result = self._data_store.upsert_text_part_by_text(text_part)
         self._load_configuration()
@@ -412,12 +654,17 @@ class MainWindow:
         if association == "enum":
             self._text_part_enum_combo.configure(state="readonly")
             self._text_part_tech_combo.configure(state="disabled")
+            self._text_part_always_include_check.configure(state="disabled")
+            self._text_part_always_include_var.set(False)
         elif association == "tech":
             self._text_part_enum_combo.configure(state="disabled")
             self._text_part_tech_combo.configure(state="readonly")
+            self._text_part_always_include_check.configure(state="normal")
         else:
             self._text_part_enum_combo.configure(state="disabled")
             self._text_part_tech_combo.configure(state="disabled")
+            self._text_part_always_include_check.configure(state="disabled")
+            self._text_part_always_include_var.set(False)
 
     def _on_remove_text_part(self) -> None:
         index = self._get_selected_index(self._text_part_list)
@@ -427,7 +674,9 @@ class MainWindow:
         success = self._data_store.remove_text_part(index)
         if success:
             self._load_configuration()
+            self._text_part_name_var.set("")
             self._text_part_text.delete("1.0", tk.END)
+            self._text_part_french_text.delete("1.0", tk.END)
             self._status_var.set("Removed text part")
         else:
             self._status_var.set("Could not remove selected text part")
@@ -437,7 +686,7 @@ class MainWindow:
 
     def _prepare_text_part_matches(self) -> None:
         job_description = self._job_description.get("1.0", tk.END).strip().lower()
-        tech_parts = self._get_text_part_tech_items()
+        tech_parts = self._get_checkable_text_part_tech_items()
         match_count = 0
         for index, part in tech_parts:
             should_check = self._matches_job_description(job_description, part)
@@ -445,6 +694,17 @@ class MainWindow:
             if should_check:
                 match_count += 1
         self._status_var.set(f"Prepared {match_count} matching TextPartTech items")
+
+        # Ensure one non-tech option is selected per kind when options exist.
+        for kind, kind_vars in self._selected_non_tech_part_vars.items():
+            if not kind_vars:
+                continue
+            if not any(var.get() for var in kind_vars.values()):
+                first_index = next(iter(kind_vars))
+                kind_vars[first_index].set(True)
+
+        if self._screens:
+            self._screens.select(1)
 
     def _matches_job_description(self, job_description: str, part: TextPartTech) -> bool:
         if not job_description:
@@ -468,10 +728,21 @@ class MainWindow:
     def _on_tech_parts_canvas_configure(self, event: tk.Event) -> None:
         self._tech_parts_canvas.itemconfigure(self._tech_parts_canvas_window, width=event.width)
 
+    def _on_non_tech_frame_configure(self, _event: tk.Event) -> None:
+        self._non_tech_canvas.configure(scrollregion=self._non_tech_canvas.bbox("all"))
+
+    def _on_non_tech_canvas_configure(self, event: tk.Event) -> None:
+        self._non_tech_canvas.itemconfigure(
+            self._non_tech_canvas_window, width=event.width
+        )
+
     def _clear_job_description(self) -> None:
         self._job_description.delete("1.0", tk.END)
         for variable in self._selected_tech_part_vars.values():
             variable.set(False)
+        for kind_vars in self._selected_non_tech_part_vars.values():
+            for variable in kind_vars.values():
+                variable.set(False)
         self._status_var.set("Job description cleared")
 
     def _get_selected_index(self, listbox: tk.Listbox) -> int | None:
@@ -491,30 +762,98 @@ class MainWindow:
         ttk.Entry(parent, textvariable=variable).grid(row=row, column=1, sticky=tk.EW, pady=4)
 
     def _on_generate(self) -> None:
-        selected_tech_parts = [
-            self._text_parts[index]
-            for index, variable in self._selected_tech_part_vars.items()
-            if variable.get() and isinstance(self._text_parts[index], TextPartTech)
-        ]
-        text = self._service.compose_cover_letter(
-            job_title=self._position_name_var.get().strip(),
-            company=self._position_company_var.get().strip(),
-            intro_parts=self._get_intro_parts(),
-            tech_parts=selected_tech_parts,
-            outro_parts=self._get_outro_parts(),
-        )
+        include_english = self._include_english_var.get()
+        include_french = self._include_french_var.get()
+        if not include_english and not include_french:
+            self._status_var.set("Select at least one output language")
+            return
+
+        selected_tech_parts: list[TextPartTech] = []
+        for index, part in self._get_text_part_tech_items():
+            if part.always_include:
+                selected_tech_parts.append(part)
+                continue
+            variable = self._selected_tech_part_vars.get(index)
+            if variable is not None and variable.get():
+                selected_tech_parts.append(part)
+
+        generated_outputs: list[str] = []
+        if include_english:
+            english_text = self._service.compose_cover_letter(
+                job_title=self._position_name_var.get().strip(),
+                company=self._position_company_var.get().strip(),
+                tech_parts=selected_tech_parts,
+                non_tech_parts=self._get_selected_non_tech_parts_all(),
+                language="english",
+            )
+            generated_outputs.append(english_text)
+
+        if include_french:
+            french_text = self._service.compose_cover_letter(
+                job_title=self._position_name_var.get().strip(),
+                company=self._position_company_var.get().strip(),
+                tech_parts=selected_tech_parts,
+                non_tech_parts=self._get_selected_non_tech_parts_all(),
+                language="french",
+            )
+            generated_outputs.append(french_text)
+
+        text = "\n\n".join(generated_outputs)
         self._output.delete("1.0", tk.END)
         self._output.insert("1.0", text)
         self._status_var.set("Cover letter generated")
 
+        if self._screens:
+            self._screens.select(2)
+
     def _on_clear(self) -> None:
         self._position_name_var.set("")
         self._position_company_var.set("")
+        self._include_english_var.set(True)
+        self._include_french_var.set(False)
         self._job_description.delete("1.0", tk.END)
         for variable in self._selected_tech_part_vars.values():
             variable.set(False)
+        for kind_vars in self._selected_non_tech_part_vars.values():
+            for variable in kind_vars.values():
+                variable.set(False)
         self._output.delete("1.0", tk.END)
         self._status_var.set("Generator form cleared")
+
+    def _browse_export_directory(self) -> None:
+        """Allow user to browse and select export directory."""
+        from tkinter import filedialog
+        from pathlib import Path
+
+        current_dir = self._export_directory_var.get()
+        selected_dir = filedialog.askdirectory(
+            title="Select Export Directory",
+            initialdir=current_dir if Path(current_dir).exists() else str(Path.home()),
+        )
+        if selected_dir:
+            self._export_directory_var.set(selected_dir)
+            self._data_store.save_export_directory(selected_dir)
+            self._status_var.set(f"Export directory set to: {selected_dir}")
+
+    def _open_export_directory(self) -> None:
+        """Open export directory in Windows Explorer."""
+        import subprocess
+        from pathlib import Path
+
+        export_dir = self._export_directory_var.get()
+        if not export_dir:
+            self._status_var.set("No export directory selected")
+            return
+
+        path = Path(export_dir)
+        if not path.exists():
+            path.mkdir(parents=True, exist_ok=True)
+
+        try:
+            subprocess.Popen(f'explorer "{export_dir}"')
+            self._status_var.set(f"Opened: {export_dir}")
+        except Exception as e:
+            self._status_var.set(f"Error opening directory: {e}")
 
     def _copy_output(self) -> None:
         text = self._output.get("1.0", tk.END).strip()
@@ -526,64 +865,163 @@ class MainWindow:
         self._status_var.set("Generated text copied to clipboard")
 
     def _export_word(self) -> None:
-        text = self._output.get("1.0", tk.END).strip()
-        if not text:
-            self._status_var.set("No generated text to export")
-            return
-
-        path = filedialog.asksaveasfilename(
-            title="Export Word",
-            defaultextension=".docx",
-            filetypes=[("Word Document", "*.docx")],
-        )
-        if not path:
-            return
-
+        self._status_var.set("Exporting Word...")
+        self._root.update()  # Force GUI update
         try:
-            from docx import Document
-        except ImportError:
-            self._status_var.set("python-docx is not installed. Install dependencies first.")
-            return
+            text = self._output.get("1.0", "end-1c")
+            if not text:
+                self._status_var.set("No generated text to export")
+                return
 
-        document = Document()
-        for paragraph in text.split("\n\n"):
-            document.add_paragraph(paragraph)
-        document.save(path)
-        self._status_var.set(f"Word export complete: {path}")
+            job_title = self._position_name_var.get().strip()
+            if not job_title:
+                self._status_var.set("Job title is required to export")
+                return
+
+            from docx import Document
+            from docx.shared import Pt
+            from pathlib import Path
+            import re
+
+            safe_title = re.sub(r'[<>:"/\\|?*]', "", job_title)
+            filename = f"cover letter - {safe_title} - Cyril Gendarme.docx"
+            export_dir = Path(self._export_directory_var.get())
+            export_dir.mkdir(parents=True, exist_ok=True)
+            self._data_store.save_export_directory(str(export_dir))
+            path = export_dir / filename
+
+            doc = Document()
+            normal_style = doc.styles["Normal"]
+            normal_style.font.name = "Calibri"
+            normal_style.font.size = Pt(11)
+            normal_style.paragraph_format.space_before = Pt(0)
+            normal_style.paragraph_format.space_after = Pt(0)
+            normal_style.paragraph_format.line_spacing = 1
+            import re as regex_module
+
+            for line in text.split("\n"):
+                p = doc.add_paragraph()
+                p.paragraph_format.space_before = Pt(0)
+                p.paragraph_format.space_after = Pt(0)
+                p.paragraph_format.line_spacing = 1
+
+                # Preserve empty lines as spacing paragraphs.
+                if line == "":
+                    continue
+
+                # Check if this is a tech bullet (- Name: content)
+                match = regex_module.match(r"^(\s*-\s*)([^:]+)(:)(.*)$", line)
+                if match:
+                    prefix = match.group(1)
+                    name = match.group(2)
+                    colon = match.group(3)
+                    content = match.group(4)
+
+                    p.add_run(prefix)
+                    self._add_word_runs_with_bold_tags(p, name, default_bold=True)
+                    self._add_word_runs_with_bold_tags(p, colon + content)
+                else:
+                    self._add_word_runs_with_bold_tags(p, line)
+
+            doc.save(str(path))
+            self._status_var.set(f"Word export complete: {path}")
+        except ImportError as e:
+            self._status_var.set("python-docx is not installed")
+        except Exception as e:
+            self._status_var.set(f"Export error: {e}")
 
     def _export_pdf(self) -> None:
-        text = self._output.get("1.0", tk.END).strip()
-        if not text:
-            self._status_var.set("No generated text to export")
-            return
-
-        path = filedialog.asksaveasfilename(
-            title="Export PDF",
-            defaultextension=".pdf",
-            filetypes=[("PDF", "*.pdf")],
-        )
-        if not path:
-            return
-
+        self._status_var.set("Exporting PDF...")
+        self._root.update()  # Force GUI update
         try:
-            from reportlab.lib.pagesizes import A4
-            from reportlab.pdfgen import canvas
-        except ImportError:
-            self._status_var.set("reportlab is not installed. Install dependencies first.")
-            return
+            text = self._output.get("1.0", "end-1c")
+            if not text:
+                self._status_var.set("No generated text to export")
+                return
 
-        pdf = canvas.Canvas(path, pagesize=A4)
-        width, height = A4
-        margin = 40
-        y = height - margin
-        for line in text.splitlines():
-            if y <= margin:
-                pdf.showPage()
-                y = height - margin
-            pdf.drawString(margin, y, line[:120])
-            y -= 14
-        pdf.save()
-        self._status_var.set(f"PDF export complete: {path}")
+            job_title = self._position_name_var.get().strip()
+            if not job_title:
+                self._status_var.set("Job title is required to export")
+                return
+
+            from reportlab.lib.pagesizes import A4
+            from reportlab.lib.units import inch
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+            from reportlab.lib.styles import getSampleStyleSheet
+            from pathlib import Path
+            import re
+
+            safe_title = re.sub(r'[<>:"/\\|?*]', "", job_title)
+            filename = f"cover letter - {safe_title} - Cyril Gendarme.pdf"
+            export_dir = Path(self._export_directory_var.get())
+            export_dir.mkdir(parents=True, exist_ok=True)
+            self._data_store.save_export_directory(str(export_dir))
+            path = export_dir / filename
+
+            doc = SimpleDocTemplate(
+                str(path), pagesize=A4, topMargin=0.5 * inch, bottomMargin=0.5 * inch
+            )
+            styles = getSampleStyleSheet()
+
+            # Create custom style with Calibri-like font (using Helvetica) at 11pt
+            from reportlab.lib.styles import ParagraphStyle
+
+            custom_style = ParagraphStyle(
+                "CustomNormal",
+                parent=styles["Normal"],
+                fontName="Helvetica",
+                fontSize=11,
+                leading=14,
+                spaceBefore=0,
+                spaceAfter=0,
+            )
+
+            story = []
+            import re as regex_module
+
+            for line in text.split("\n"):
+                if line == "":
+                    story.append(Spacer(1, custom_style.leading))
+                    continue
+
+                # Keep user-provided <b>...</b> tags and also bold tech bullet labels.
+                formatted_line = self._format_pdf_line_with_bold_tags(line)
+                story.append(Paragraph(formatted_line, custom_style))
+
+            doc.build(story)
+            self._status_var.set(f"PDF export complete: {path}")
+        except ImportError as ie:
+            self._status_var.set(f"Missing package: {ie}")
+        except Exception as e:
+            self._status_var.set(f"Export error: {e}")
+
+    def _add_word_runs_with_bold_tags(
+        self, paragraph: object, text: str, default_bold: bool = False
+    ) -> None:
+        import re
+
+        chunks = re.split(r"(<b>.*?</b>)", text, flags=re.IGNORECASE)
+        for chunk in chunks:
+            if not chunk:
+                continue
+
+            match = re.fullmatch(r"<b>(.*?)</b>", chunk, flags=re.IGNORECASE)
+            if match:
+                run = paragraph.add_run(match.group(1))
+                run.bold = True
+                continue
+
+            run = paragraph.add_run(chunk)
+            if default_bold:
+                run.bold = True
+
+    def _format_pdf_line_with_bold_tags(self, line: str) -> str:
+        import re
+        from xml.sax.saxutils import escape
+
+        escaped = escape(line)
+        escaped = escaped.replace("&lt;b&gt;", "<b>").replace("&lt;/b&gt;", "</b>")
+        return re.sub(r"^(\s*-\s*)([^:]+)(:)", r"\1<b>\2</b>\3", escaped)
 
     def start(self) -> None:
         self._root.mainloop()
