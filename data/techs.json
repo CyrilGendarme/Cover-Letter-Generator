@@ -1,5 +1,35 @@
 [
   {
+    "name": "C1 English",
+    "text_parts": []
+  },
+  {
+    "name": "Fintech",
+    "text_parts": [
+      "fintech",
+      "finance",
+      "financial"
+    ]
+  },
+  {
+    "name": "APIs Microservices",
+    "text_parts": [
+      "API",
+      "microservices",
+      "graphql",
+      "saas"
+    ]
+  },
+   {
+    "name": "AI LLM",
+    "text_parts": [
+      "ai",
+      "llm",
+      "ai agent",
+      "ai ml"
+    ]
+  },
+  {
     "name": "CPP",
     "text_parts": [
       "cpp",
@@ -7,10 +37,172 @@
     ]
   },
   {
+    "name": "Python",
+    "text_parts": [
+      "python",
+      "django",
+      "flask",
+      "fastapi"
+    ]
+  },
+  {
+    "name": "C# .NET",
+    "text_parts": [
+      "c#",
+      ".net",
+      "dotnet"
+    ]
+  },
+  {
+    "name": "Javascript Typescript",
+    "text_parts": [
+      "javascript",
+      "typescript",
+      "react"
+    ]
+  },
+  {
     "name": "Java",
     "text_parts": [
       "java",
       "kotlin"
+    ]
+  },
+  {
+    "name": "Node.js",
+    "text_parts": [
+      "node.js",
+      "nodejs"
+    ]
+  },
+  {
+    "name": "Testing",
+    "text_parts": [
+      "pytest",
+      "cypress",
+      "xUnit",
+      "Googletest"
+    ]
+  },
+  {
+    "name": "DBMS",
+    "text_parts": [
+      "sql",
+      "nosql",
+      "mongodb",
+      "redis"
+    ]
+  },
+  {
+    "name": "Linux",
+    "text_parts": [
+      "Linux",
+      "Debian",
+      "Ubuntu",
+      "VPS"
+    ]
+  },
+  {
+    "name": "Windows Administration",
+    "text_parts": [
+      "Windows Administration",
+      "Administration Windows"
+    ]
+  },
+  {
+    "name": "Cloud / DevOps / CI/CD / IaS",
+    "text_parts": [
+      "devops",
+      "cd/ci",
+      "IaS",
+      "infrastructure as code",
+      "cloud",
+      "Kubernetes",
+      "Docker",
+      "Terraform"
+    ]
+  },
+  {
+    "name": "IoT Embedded",
+    "text_parts": [
+      "IoT",
+      "Embedded"
+    ]
+  },
+  {
+    "name": "ERP",
+    "text_parts": [
+      "odoo",
+      "atlassian",
+      "slack",
+      "erp"
+    ]
+  },
+  {
+    "name": "ETL",
+    "text_parts": [
+      "ETL"
+    ]
+  },
+  {
+    "name": "Matlab Simulink",
+    "text_parts": [
+      "Matlab Simulink"
+    ]
+  },
+  {
+    "name": "Computer Vision",
+    "text_parts": [
+      "Computer Vision",
+      "OpenCV"
+    ]
+  },
+  {
+    "name": "Blazor",
+    "text_parts": [
+      "Blazor"
+    ]
+  },
+  {
+    "name": "Celery",
+    "text_parts": [
+      "Celery"
+    ]
+  },
+  {
+    "name": "OAUTH",
+    "text_parts": [
+      "OAUTH"
+    ]
+  },
+  {
+    "name": "Scade",
+    "text_parts": [
+      "Scade"
+    ]
+  },
+  {
+    "name": "Wordpress",
+    "text_parts": [
+      "Wordpress"
+    ]
+  },
+  {
+    "name": "Shopify",
+    "text_parts": [
+      "Shopify"
+    ]
+  },
+  {
+    "name": "Networking",
+    "text_parts": [
+      "tcp",
+      "tcp/ip",
+      "routing",
+      "switching",
+      "VPN",
+      "VLAN",
+      "Wireshark"
     ]
   }
 ]

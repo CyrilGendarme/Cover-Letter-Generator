@@ -1,12 +1,337 @@
 [
   {
-    "kind": "intro_outro",
-    "intro_outro": "intro",
-    "text": "something bla bla\nsomething bla bla\nsomething bla bla\nsomething bla bla\nsomething bla bla\nsomething bla bla\nsomething bla bla\nsomething bla bla"
+    "kind": "non_tech",
+    "text_part_kind": "application_reason",
+    "text": "This position particularly appeals to me because it would allow me to contribute to complex software systems while continuing to grow in a technically strong engineering environment.",
+    "name": "strong engineering env",
+    "french_text": "Ce poste m'int\u00e9resse tout particuli\u00e8rement car il me permettrait de contribuer \u00e0 la mise au point de syst\u00e8mes logiciels complexes, en \u00e9voluant au sein d'un environnement challengeant."
   },
   {
-    "kind": "intro_outro",
-    "intro_outro": "outro",
-    "text": "aeazeazeaze"
+    "kind": "non_tech",
+    "text_part_kind": "application_reason",
+    "text": "This position particularly appeals to me because it would allow me to contribute to an impactful product that have a positive social impact.",
+    "name": "positive impactful product",
+    "french_text": "Ce poste m'int\u00e9resse tout particuli\u00e8rement car il me permettrait de contribuer \u00e0 la cr\u00e9ation d'un produit \u00e0 l'impact social positif."
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "application_reason",
+    "text": "I am particularly interested in this role because it combines the kind of technical challenges I enjoy with the opportunity to contribute to products used in real-world environments.",
+    "name": "industry real-world env",
+    "french_text": "Ce poste m'int\u00e9resse tout particuli\u00e8rement car il semble allier des d\u00e9fis techniques \u00e0 la possibilit\u00e9 de contribuer \u00e0 la cr\u00e9ation de produits utilis\u00e9s dans des environnements hardware tangibles."
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "signature",
+    "text": "Sincerely,\nCyril Gendarme\n+32 491 30 71 70\ncyrilgendarme@gmail.com",
+    "name": "",
+    "french_text": "Cordialement,\nCyril Gendarme\n+32 491 30 71 70\ncyrilgendarme@gmail.com$"
+  },
+  {
+    "kind": "tech",
+    "text": "Certified C1 English proficiency (official CEFR test).",
+    "name": "",
+    "french_text": "Niveau d'anglais C1 certifi\u00e9 (test officiel du CECR).",
+    "tech": {
+      "name": "C1 English",
+      "text_parts": []
+    },
+    "always_include": true
+  },
+  {
+    "kind": "tech",
+    "text": "One of my previous roles involved full-stack development for a FinTech startup, where I gained a strong understanding of core banking and finance concepts, including fund structuring and management, regulatory compliance, financial data analysis and portfolio valuation.",
+    "name": "FinTech",
+    "french_text": "Dans le cadre d'une de mes pr\u00e9c\u00e9dentes fonctions, j'ai travaill\u00e9 comme ing\u00e9nieur full-stack pour une start-up FinTech. J'y ai acquis une solide compr\u00e9hension des concepts fondamentaux du secteur bancaire et financier, notamment la structuration et la gestion de fonds, la regulatory compliance, l'analyse des donn\u00e9es financi\u00e8res et la valuation de portfolios.",
+    "tech": {
+      "name": "Fintech",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Extensive safety-critical development using C++20, GoogleTest, Boost, and related tools. Personal projects include a real-time weather probe (C) and a smart doorbell with hand gesture and facial recognition (C++/OpenCV).",
+    "name": "C/C++",
+    "french_text": "Exp\u00e9rience extensive en d\u00e9veloppement safety-critical utilisant C++20, GoogleTest, Boost et outils associ\u00e9s. Projets personnels incluant une sonde m\u00e9t\u00e9o en temps r\u00e9el (C) et une sonnette intelligente avec reconnaissance de gestes de la main et reconnaissance faciale (C++/OpenCV).",
+    "tech": {
+      "name": "CPP",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Developed and deployed secure, production-ready full-stack Django/React applications (including usage of Pandas, OpenCV and SQLAlchemy)  Built a Celery-based task scheduler for complex batch execution. Refactored an existing FastAPI back-end, writing unit tests with Pytest.",
+    "name": "Python",
+    "french_text": "D\u00e9veloppement et d\u00e9ploiement d\u2019applications full-stack s\u00e9curis\u00e9es et producution-ready avec Django/React (utilisation de Pandas, OpenCV et SQLAlchemy). Mise en place d\u2019un syst\u00e8me de worklow bas\u00e9 sur Celery pour l\u2019ex\u00e9cution de traitements batch complexes. Refactorisation d\u2019un back-end FastAPI existant, avec \u00e9criture de tests unitaires via Pytest.",
+    "tech": {
+      "name": "Python",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Proficient in React, TypeScript, and native JavaScript. Developed modern web applications using React, leveraging tools such as Vite, Redux, and React Hooks, with a reusable and generic component architecture. Implemented end-to-end testing using Cypress. Experience working with Mantine and Material UI as component libraries.",
+    "name": "JavaScript, Typescript, React",
+    "french_text": "Ma\u00eetrise de React, TypeScript et JavaScript natif. D\u00e9veloppement d\u2019applications web modernes avec React, en utilisant notamment Vite, Redux et les React Hooks, avec une architecture de composants r\u00e9utilisables et g\u00e9n\u00e9riques. Mise en place de tests end-to-end avec Cypress. Exp\u00e9rience avec Mantine et Material UI comme biblioth\u00e8ques de composants.",
+    "tech": {
+      "name": "Javascript Typescript",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Developed backend components for an IoT project, building custom services within a Node-RED-based distributed full-stack architecture.",
+    "name": "Node.js",
+    "french_text": "D\u00e9veloppement de composants back-end pour un projet IoT, avec la cr\u00e9ation de services personnalis\u00e9s au sein d\u2019une architecture full-stack distribu\u00e9e bas\u00e9e sur Node-RED.",
+    "tech": {
+      "name": "Node.js",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Implemented test suites across multiple technology stacks. Experience with JUnit, xUnit, Pytest, Google Test, and Cypress.",
+    "name": "Testing",
+    "french_text": "Mise en place de suites de tests sur plusieurs stacks technologiques. Exp\u00e9rience avec JUnit, xUnit, Pytest, Google Test et Cypress.",
+    "tech": {
+      "name": "Testing",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Working experience with Azure Database, MySQL, SQLite, PostgreSQL, Oracle (including PL/SQL), Redis, MongoDB.",
+    "name": "Database Management",
+    "french_text": "Exp\u00e9rience professionnelle avec Azure Database, MySQL, SQLite, PostgreSQL, Oracle (incluant PL/SQL), Redis et MongoDB.",
+    "tech": {
+      "name": "DBMS",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience working in Windows environments with strong use of PowerShell for automation, system administration, scripting, and task orchestration.",
+    "name": "Windows Administration",
+    "french_text": "Exp\u00e9rience de travail dans des environnements Windows, avec une forte utilisation de PowerShell pour l\u2019automatisation, l\u2019administration syst\u00e8me, le scripting et l\u2019orchestration de t\u00e2ches.",
+    "tech": {
+      "name": "Windows Administration",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience with Docker, Azure Tools (Portal, DevOps, CLI, Bicep, AAD, Entra ID, etc). Designed and maintained CI/CD pipelines using GitLab CI, enabling automated deployments to secure self-managed servers. Working experience with Azure Cloud. Deployment experience using Docker and Kubernetes for containerized and orchestrated applications.",
+    "name": "Cloud / DevOps",
+    "french_text": "Exp\u00e9rience avec Docker et les outils Azure (Portal, DevOps, CLI, Bicep, AAD, Entra ID, etc). Conception et maintenance de pipelines CI/CD avec GitLab CI, permettant des d\u00e9ploiements automatis\u00e9s vers des serveurs s\u00e9curis\u00e9s auto-h\u00e9berg\u00e9s. Exp\u00e9rience de travail avec Azure Cloud. D\u00e9ploiement via Docker et Kubernetes pour des applications conteneuris\u00e9es.",
+    "tech": {
+      "name": "Cloud / DevOps / CI/CD / IaS",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Contributed to a smart home project using Node-RED, MQTT, and KNX, designing a room security system based on multiple Linux VMs, secure MQTT communication, and hardware sensor integration. Experience in the defense sector working under real-time constraints in safety-critical environments.",
+    "name": "IoT / Embedded development",
+    "french_text": "Contribution \u00e0 un projet de smart home utilisant Node-RED, MQTT et KNX, avec la conception d\u2019un syst\u00e8me de s\u00e9curit\u00e9 de salle bas\u00e9 sur plusieurs VM Linux, des communications MQTT s\u00e9curis\u00e9es et l\u2019int\u00e9gration de capteurs mat\u00e9riels. Exp\u00e9rience dans le secteur de la d\u00e9fense, en travaillant dans un environnement safety-critical \u00e0 contraintes temps r\u00e9el.",
+    "tech": {
+      "name": "IoT Embedded",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience working with ERP, including custom Odoo development for business process management, Atlassian suite (Jira, Confluence) for project tracking and documentation, and Slack for workflow coordination.",
+    "name": "ERP / Odoo",
+    "french_text": "Exp\u00e9rience de travail avec des ERP, incluant du d\u00e9veloppement Odoo personnalis\u00e9 pour la gestion des processus m\u00e9tiers, la suite Atlassian (Jira, Confluence) pour le suivi de projets et la documentation, ainsi que Slack pour la coordination des workflows.",
+    "tech": {
+      "name": "ERP",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Contributed to the development of a core .NET-based ETL library. Experience in the financial industry designing ETL pipelines for data reconciliation, transformation, and validation. Worked on data aggregation and visualization through custom reports.",
+    "name": "ETL",
+    "french_text": "Contribution au d\u00e9veloppement d\u2019une biblioth\u00e8que ETL core bas\u00e9e sur .NET. Exp\u00e9rience dans le secteur financier, avec la conception de pipelines ETL pour la r\u00e9conciliation, la transformation et la validation de donn\u00e9es. Travail sur l\u2019agr\u00e9gation de donn\u00e9es et la visualisation via des rapports personnalis\u00e9s.",
+    "tech": {
+      "name": "ETL",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience using MATLAB for numerical computing, data analysis, and algorithm prototyping, and Simulink for model-based design and system simulation.",
+    "name": "Matlab / Simulink",
+    "french_text": "Exp\u00e9rience d\u2019utilisation de MATLAB pour le calcul num\u00e9rique, l\u2019analyse de donn\u00e9es et le prototypage d\u2019algorithmes, ainsi que de Simulink pour la conception bas\u00e9e sur mod\u00e8les et la simulation de syst\u00e8mes.",
+    "tech": {
+      "name": "Matlab Simulink",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience using OpenCV, with exposure to AI-based approaches for pattern recognition and object detection.",
+    "name": "Computer Vision",
+    "french_text": "Exp\u00e9rience avec OpenCV, avec une exposition aux approches bas\u00e9es sur l\u2019IA pour la reconnaissance de motifs et la d\u00e9tection d\u2019objets.",
+    "tech": {
+      "name": "Computer Vision",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Designed a frontend interface using Blazor as part of an existing SaaS product, integrating a workflow management library.",
+    "name": "Blazor",
+    "french_text": "Conception d\u2019une interface frontend en Blazor dans le cadre d\u2019un produit SaaS existant, avec int\u00e9gration d\u2019une biblioth\u00e8que de gestion de workflows.",
+    "tech": {
+      "name": "Blazor",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Developed custom process pipelines and workflow systems using Celery, leveraging distributed workers for asynchronous task execution, job processing, and background computation across services.",
+    "name": "Celery",
+    "french_text": "D\u00e9veloppement de pipelines et de syst\u00e8mes de workflow utilisant Celery, en exploitant des workers distribu\u00e9s pour l\u2019ex\u00e9cution asynchrone de t\u00e2ches, le traitement de jobs et les calculs en arri\u00e8re-plan entre services.",
+    "tech": {
+      "name": "Celery",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Implemented OAuth2 authentication and authorization in a C#/.NET project, integrating with Azure-based identity and credential management.",
+    "name": "OAuth2",
+    "french_text": "Impl\u00e9mentation de l\u2019authentification et de l\u2019autorisation OAuth2 dans un projet C#/.NET, avec int\u00e9gration \u00e0 la gestion des identit\u00e9s et des identifiants bas\u00e9e sur Azure.",
+    "tech": {
+      "name": "OAUTH",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Worked in a safety-critical environment using SCADE for model-based development.",
+    "name": "Scade",
+    "french_text": "Travail dans un environnement safety-critical en utilisant SCADE pour le d\u00e9veloppement de GUI bas\u00e9 sur mod\u00e8les.",
+    "tech": {
+      "name": "Scade",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Designed custom WordPress websites, including theme customization and custom plugins development.",
+    "name": "WordPress",
+    "french_text": "Conception de sites WordPress personnalis\u00e9s, incluant la personnalisation de th\u00e8mes et le d\u00e9veloppement de plugins customs.",
+    "tech": {
+      "name": "Wordpress",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Customized Shopify themes using Liquid, HTML and CSS.",
+    "name": "Shopify",
+    "french_text": "Personnalisation d'un th\u00e8me Shopify en utilisant Liquid, HTML et CSS.",
+    "tech": {
+      "name": "Shopify",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Solid knowledge of networking fundamentals, including TCP/IP, routing and switching, firewalls, VPNs, VLANs, DHCP, DNS, and NAT, with practical experience using Wireshark for network analysis and troubleshooting. Academic background based on Cisco certification curricula, equivalent to CCNA and CCNP Routing & Switching, with exposure to approximately 70\u201380% of the CCNP Security syllabus.",
+    "name": "Networking",
+    "french_text": "Solides connaissances des r\u00e9seaux, incluant TCP/IP, le routage et le switching, les firewalls, VPNs, VLANs, DHCP, DNS et NAT, avec une exp\u00e9rience pratique de Wireshark pour l\u2019analyse de paquets. Formation acad\u00e9mique bas\u00e9e sur les certifications Cisco, \u00e9quivalente \u00e0 CCNA et CCNP Routing & Switching, avec une exposition \u00e0 environ 70\u201380 % du syllabus CCNP Security.",
+    "tech": {
+      "name": "Networking",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience in VPS administration, security configuration, minimal Linux distributions (Gentoo), and embedded system development using Yocto for custom OS builds. Proficient with Bash.",
+    "name": "Linux Administration",
+    "french_text": "Exp\u00e9rience en administration de VPS, configuration de s\u00e9curisation, distributions Linux minimalistes (Gentoo) et d\u00e9veloppement de syst\u00e8mes embarqu\u00e9s avec Yocto pour des builds d\u2019OS personnalis\u00e9s. Ma\u00eetrise de Bash.",
+    "tech": {
+      "name": "Linux",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Use of GitHub Copilot and Claude Code in day-to-day development workflows.Integrated APIs and Large Language Models (LLMs), including the OpenAI API, into software systems. Experience with Azure AI services for text analysis and information extraction.",
+    "name": "AI Integration",
+    "french_text": "Utilisation de GitHub Copilot et de Claude Code dans mon fonctionnement de travail quotidien. Int\u00e9gration d\u2019API et de LLMs, dont l\u2019API OpenAI, dans des syst\u00e8mes logiciels. Exp\u00e9rience avec les services Azure AI pour l\u2019analyse de texte et l\u2019extraction d\u2019informations.",
+    "tech": {
+      "name": "Linux",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Backend development for company SaaS using C#/.NET, experience with Blazor and OpenAPI. Implemented an end-to-end OAuth2 AAA system. Contributed to the developemnt of the main C# ETL library. Experience with Unity.",
+    "name": "C#/.NET",
+    "french_text": "D\u00e9veloppement back-end pour une solution SaaS d\u2019entreprise en C#/.NET, avec exp\u00e9rience sur Blazor et OpenAPI. Mise en place d\u2019un syst\u00e8me AAA OAuth2 complet de bout en bout. Contribution au d\u00e9veloppement de la principale biblioth\u00e8que ETL en C#. Exp\u00e9rience avec Unity.",
+    "tech": {
+      "name": "C# .NET",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "outro",
+    "text": "\nI would welcome the opportunity to discuss how my skills and experience align with the needs of [COMPANY NAME].\n\nPlease do not hesitate to contact me at +32.491.30.71.70 or via email at cyrilgendarme@gmail.com.\n\nThank you for your consideration.\n",
+    "name": "",
+    "french_text": "\nJe serais ravi de pouvoir \u00e9changer avec vous sur la mani\u00e8re dont mes comp\u00e9tences correspondent aux besoins de [COMPANY NAME].\n\nN'h\u00e9sitez pas \u00e0 me contacter au +32.491.30.71.70 ou par e-mail \u00e0 l'adresse cyrilgendarme@gmail.com.\n\nJe vous remercie de l'attention que vous porterez \u00e0 ma candidature.\n"
+  },
+  {
+    "kind": "tech",
+    "text": "Experience with API design and integration (REST, GraphQL), microservices architecture, and distributed system development for SaaS products.",
+    "name": "APIs Design",
+    "french_text": "Exp\u00e9rience en conception et int\u00e9gration d'API (REST, GraphQL), en architecture de microservices et en d\u00e9veloppement de syst\u00e8mes distribu\u00e9s pour des produits SaaS.",
+    "tech": {
+      "name": "APIs Microservices",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "intro",
+    "text": "Dear Sir or Madam,\n\n\nAs a software engineer with more than four years of experience, I am writing to express my interest in the <b>[POSITION NAME] position at [COMPANY NAME]</b>.",
+    "name": "",
+    "french_text": "Madame, Monsieur,\n\n\nIng\u00e9nieur informatique avec plus de quatre ans d\u2019exp\u00e9rience, je me permets de vous adresser ma candidature pour le <b>poste de [POSITION NAME] au sein de [COMPANY NAME]</b>."
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "personal_presentation",
+    "text": "Over the past few years, I have built a versatile profile as a software engineer across multiple industries and technology stacks.\n\nI started as a freelance web developer during my studies, gaining early experience in client communication, requirements analysis, and project delivery.\n\nSince then, I have worked on safety-critical systems, IoT solutions, full-stack applications, and cloud-based tools, with increasing responsibility in system design, architecture, and delivery.\n\nPersonal projects in AI, game development, and automation have further strengthened my ability to take ideas from concept to deployment, combining software engineering, communication, DevOps, and infrastructure skills.\n\n\nIn consideration of the position requirements, I would like to <b>highlight the following experience</b>:",
+    "name": "",
+    "french_text": "Au cours des derni\u00e8res ann\u00e9es, j\u2019ai d\u00e9velopp\u00e9 un profil polyvalent d\u2019ing\u00e9nieur logiciel en intervenant sur plusieurs secteurs et technologies.\n\nJ\u2019ai d\u00e9but\u00e9 en tant que d\u00e9veloppeur web freelance durant mes \u00e9tudes, ce qui m\u2019a permis d\u2019acqu\u00e9rir une premi\u00e8re exp\u00e9rience en gestion de projet, analyse des besoins, communication client et respect des d\u00e9lais.\n\nPar la suite, j\u2019ai travaill\u00e9 sur des syst\u00e8mes safety-critical, des projets IoT, des applications full-stack et des solutions cloud, avec une responsabilit\u00e9 croissante sur l\u2019architecture, la gestion des livraisons. \n\nMes projets personnels en IA, d\u00e9veloppement de jeux et automatisation ont renforc\u00e9 ma capacit\u00e9 \u00e0 transformer des id\u00e9es en produits concrets, en combinant comp\u00e9tences en ing\u00e9nierie logicielle, communication, DevOps et infrastructure.\n\n\nAu regard des exigences du poste, je souhaite plus particuli\u00e8rement mettre en avant <b>les exp\u00e9riences suivantes</b> :"
   }
 ]

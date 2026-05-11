@@ -4,12 +4,14 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 
-class IntroOutroKind(str, Enum):
+class TextPartKind(str, Enum):
     """Enum values for intro/outro style text part association."""
 
     INTRO = "intro"
+    APPLICATION_REASON = "application_reason"
+    PERSONNAL_PRESENTATION = "personal_presentation"
     OUTRO = "outro"
-    BODY = "body"
+    SIGNATURE = "signature"
 
 
 @dataclass
@@ -34,14 +36,26 @@ class TextPart:
     """Base text part."""
 
     text: str
+    name: str = ""
+    french_text: str = ""
 
     def to_dict(self) -> dict[str, object]:
-        return {"kind": "text", "text": self.text}
+        return {
+            "kind": "text",
+            "text": self.text,
+            "name": self.name,
+            "french_text": self.french_text,
+        }
+
+    def identifier(self) -> str:
+        return self.name or "text"
 
     @classmethod
     def from_dict(cls, data: dict[str, object]) -> "TextPart":
         kind = str(data.get("kind", "text")).strip().lower()
         text = str(data.get("text", ""))
+        name = str(data.get("name", ""))
+        french_text = str(data.get("french_text", ""))
 
         if kind == "tech":
             raw_tech = data.get("tech", {})
@@ -49,21 +63,41 @@ class TextPart:
                 tech = Tech.from_dict(raw_tech)
             else:
                 tech = Tech(name=str(raw_tech))
-            return TextPartTech(text=text, tech=tech)
+            always_include = bool(data.get("always_include", False))
+            return TextPartTech(
+                text=text,
+                name=name,
+                french_text=french_text,
+                tech=tech,
+                always_include=always_include,
+            )
 
-        if kind == "intro_outro":
-            raw_enum = str(data.get("intro_outro", IntroOutroKind.BODY.value)).strip().lower()
-            enum_value = IntroOutroKind(raw_enum) if raw_enum in {item.value for item in IntroOutroKind} else IntroOutroKind.BODY
-            return IntroOutroTextPart(text=text, intro_outro=enum_value)
+        if kind == "non_tech":
+            raw_enum = (
+                str(data.get("text_part_kind", TextPartKind.INTRO.value))
+                .strip()
+                .lower()
+            )
+            enum_value = (
+                TextPartKind(raw_enum)
+                if raw_enum in {item.value for item in TextPartKind}
+                else TextPartKind.INTRO
+            )
+            return TextPartNonTech(
+                text=text,
+                name=name,
+                french_text=french_text,
+                text_part_kind=enum_value,
+            )
 
-        return cls(text=text)
+        return cls(text=text, name=name, french_text=french_text)
 
 
 @dataclass
-class IntroOutroTextPart(TextPart):
+class TextPartNonTech(TextPart):
     """Text part that supports placeholder replacement."""
 
-    intro_outro: IntroOutroKind = IntroOutroKind.BODY
+    text_part_kind: TextPartKind = TextPartKind.INTRO
 
     def replace_placeholder(self, placeholder: str, value: str) -> str:
         self.text = self.text.replace(placeholder, value)
@@ -71,21 +105,33 @@ class IntroOutroTextPart(TextPart):
 
     def to_dict(self) -> dict[str, object]:
         return {
-            "kind": "intro_outro",
-            "intro_outro": self.intro_outro.value,
+            "kind": "non_tech",
+            "text_part_kind": self.text_part_kind.value,
             "text": self.text,
+            "name": self.name,
+            "french_text": self.french_text,
         }
+
+    def identifier(self) -> str:
+        return self.name or self.text_part_kind.value
 
 
 @dataclass
 class TextPartTech(TextPart):
     """Text part associated with a specific technology."""
 
-    tech: Tech
+    tech: Tech = field(default_factory=Tech)
+    always_include: bool = False
 
     def to_dict(self) -> dict[str, object]:
         return {
             "kind": "tech",
             "text": self.text,
+            "name": self.name,
+            "french_text": self.french_text,
             "tech": self.tech.to_dict(),
+            "always_include": self.always_include,
         }
+
+    def identifier(self) -> str:
+        return self.name or self.tech.name or "tech"
