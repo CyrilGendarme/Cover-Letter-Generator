@@ -4,6 +4,15 @@
     "text_parts": []
   },
   {
+    "name": "French",
+    "text_parts": [
+      "fran\u00e7ais",
+      "canada",
+      "montr\u00e9al",
+      "qu\u00e9bec"
+    ]
+  },
+  {
     "name": "Fintech",
     "text_parts": [
       "fintech",
@@ -20,7 +29,7 @@
       "saas"
     ]
   },
-   {
+  {
     "name": "AI LLM",
     "text_parts": [
       "ai",

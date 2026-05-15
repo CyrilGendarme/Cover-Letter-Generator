@@ -39,6 +39,7 @@ class MainWindow:
 
         self._tech_name_var = tk.StringVar()
         self._techs: list[Tech] = []
+        self._tech_drag_start_index: int | None = None
 
         self._text_parts: list[TextPart] = []
         self._text_part_name_var = tk.StringVar()
@@ -47,9 +48,8 @@ class MainWindow:
         self._text_part_tech_var = tk.StringVar(value="")
         self._text_part_always_include_var = tk.BooleanVar(value=False)
         self._selected_tech_part_vars: dict[int, tk.BooleanVar] = {}
-        self._selected_non_tech_part_vars: dict[
-            TextPartKind, dict[int, tk.BooleanVar]
-        ] = {}
+        self._generated_output_with_tags = ""
+        self._application_reason_items: list[tuple[int, TextPartNonTech]] = []
 
         self._screens: ttk.Notebook | None = None
 
@@ -159,33 +159,34 @@ class MainWindow:
         self._tech_parts_check_frame.bind("<Configure>", self._on_tech_parts_frame_configure)
         self._tech_parts_canvas.bind("<Configure>", self._on_tech_parts_canvas_configure)
 
-        ttk.Label(parent, text="TextPartNonTech options").grid(
+        ttk.Label(parent, text="Application reason").grid(
             row=4, column=0, sticky=tk.NW, padx=(0, 8), pady=4
         )
-        non_tech_frame = ttk.LabelFrame(parent, text="Select one per kind")
-        non_tech_frame.grid(row=4, column=1, sticky=tk.NSEW, pady=4)
-        non_tech_frame.columnconfigure(0, weight=1)
-        non_tech_frame.rowconfigure(0, weight=1)
+        application_reason_frame = ttk.LabelFrame(
+            parent, text="Select one application reason"
+        )
+        application_reason_frame.grid(row=4, column=1, sticky=tk.NSEW, pady=4)
+        application_reason_frame.columnconfigure(0, weight=1)
+        application_reason_frame.rowconfigure(0, weight=1)
 
-        self._non_tech_canvas = tk.Canvas(
-            non_tech_frame, borderwidth=0, highlightthickness=0
+        self._application_reason_list = tk.Listbox(
+            application_reason_frame, exportselection=False
         )
-        self._non_tech_canvas.grid(row=0, column=0, sticky=tk.NSEW)
+        self._application_reason_list.grid(
+            row=0, column=0, sticky=tk.NSEW, padx=(6, 0), pady=6
+        )
 
-        non_tech_scrollbar = ttk.Scrollbar(
-            non_tech_frame, orient=tk.VERTICAL, command=self._non_tech_canvas.yview
+        application_reason_scrollbar = ttk.Scrollbar(
+            application_reason_frame,
+            orient=tk.VERTICAL,
+            command=self._application_reason_list.yview,
         )
-        non_tech_scrollbar.grid(row=0, column=1, sticky=tk.NS)
-        self._non_tech_canvas.configure(yscrollcommand=non_tech_scrollbar.set)
-
-        self._non_tech_check_frame = ttk.Frame(self._non_tech_canvas)
-        self._non_tech_canvas_window = self._non_tech_canvas.create_window(
-            (0, 0), window=self._non_tech_check_frame, anchor="nw"
+        application_reason_scrollbar.grid(
+            row=0, column=1, sticky=tk.NS, padx=(0, 6), pady=6
         )
-        self._non_tech_check_frame.bind(
-            "<Configure>", self._on_non_tech_frame_configure
+        self._application_reason_list.configure(
+            yscrollcommand=application_reason_scrollbar.set
         )
-        self._non_tech_canvas.bind("<Configure>", self._on_non_tech_canvas_configure)
 
         actions = ttk.Frame(parent)
         actions.grid(row=5, column=1, sticky=tk.W, pady=(8, 0))
@@ -247,6 +248,9 @@ class MainWindow:
         self._tech_list = tk.Listbox(parent, exportselection=False)
         self._tech_list.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW, padx=8, pady=(8, 4))
         self._tech_list.bind("<<ListboxSelect>>", self._on_tech_selected)
+        self._tech_list.bind("<ButtonPress-1>", self._on_tech_drag_start)
+        self._tech_list.bind("<B1-Motion>", self._on_tech_drag_motion)
+        self._tech_list.bind("<ButtonRelease-1>", self._on_tech_drag_release)
 
         ttk.Label(parent, text="Name").grid(row=1, column=0, sticky=tk.W, padx=8)
         ttk.Entry(parent, textvariable=self._tech_name_var).grid(row=2, column=0, columnspan=2, sticky=tk.EW, padx=8)
@@ -368,7 +372,7 @@ class MainWindow:
         self._refresh_text_part_list()
         self._refresh_text_part_tech_keys()
         self._refresh_text_part_tech_candidates()
-        self._refresh_non_tech_candidates()
+        self._refresh_application_reason_candidates()
         self._status_var.set("Configuration loaded from JSON files")
 
     def _refresh_text_part_tech_keys(self) -> None:
@@ -389,30 +393,6 @@ class MainWindow:
         }
         self._render_text_part_tech_checkboxes(tech_parts)
 
-    def _refresh_non_tech_candidates(self) -> None:
-        grouped = self._get_non_tech_part_items_grouped()
-        current_states = {
-            kind: {index: variable.get() for index, variable in kind_vars.items()}
-            for kind, kind_vars in self._selected_non_tech_part_vars.items()
-        }
-
-        self._selected_non_tech_part_vars = {}
-        for kind, items in grouped.items():
-            kind_vars: dict[int, tk.BooleanVar] = {}
-            any_selected = False
-            for index, _part in items:
-                selected = current_states.get(kind, {}).get(index, False)
-                kind_vars[index] = tk.BooleanVar(value=selected)
-                any_selected = any_selected or selected
-
-            if items and not any_selected:
-                first_index = items[0][0]
-                kind_vars[first_index].set(True)
-
-            self._selected_non_tech_part_vars[kind] = kind_vars
-
-        self._render_non_tech_checkboxes(grouped)
-
     def _refresh_tech_list(self) -> None:
         self._tech_list.delete(0, tk.END)
         for tech in self._techs:
@@ -431,10 +411,22 @@ class MainWindow:
             )
 
     def _get_text_part_tech_items(self) -> list[tuple[int, TextPartTech]]:
-        items: list[tuple[int, TextPartTech]] = []
-        for index, part in enumerate(self._text_parts):
-            if isinstance(part, TextPartTech):
-                items.append((index, part))
+        items: list[tuple[int, TextPartTech]] = [
+            (index, part)
+            for index, part in enumerate(self._text_parts)
+            if isinstance(part, TextPartTech)
+        ]
+
+        tech_order = {
+            tech.name.strip().lower(): order for order, tech in enumerate(self._techs)
+        }
+
+        items.sort(
+            key=lambda item: (
+                tech_order.get(item[1].tech.name.strip().lower(), len(self._techs)),
+                item[0],
+            )
+        )
         return items
 
     def _get_checkable_text_part_tech_items(self) -> list[tuple[int, TextPartTech]]:
@@ -444,37 +436,76 @@ class MainWindow:
             if not part.always_include
         ]
 
-    def _get_non_tech_part_items_grouped(
-        self,
-    ) -> dict[TextPartKind, list[tuple[int, TextPartNonTech]]]:
-        grouped: dict[TextPartKind, list[tuple[int, TextPartNonTech]]] = {}
-        for index, part in enumerate(self._text_parts):
-            if not isinstance(part, TextPartNonTech):
+    def _get_all_non_tech_parts(self) -> list[TextPartNonTech]:
+        return [part for part in self._text_parts if isinstance(part, TextPartNonTech)]
+
+    def _get_application_reason_items(self) -> list[tuple[int, TextPartNonTech]]:
+        return [
+            (index, part)
+            for index, part in enumerate(self._text_parts)
+            if isinstance(part, TextPartNonTech)
+            and part.text_part_kind == TextPartKind.APPLICATION_REASON
+        ]
+
+    def _refresh_application_reason_candidates(self) -> None:
+        selected_part: TextPartNonTech | None = None
+        current_selection = self._application_reason_list.curselection()
+        if current_selection and self._application_reason_items:
+            selected_list_index = int(current_selection[0])
+            if 0 <= selected_list_index < len(self._application_reason_items):
+                _, selected_part = self._application_reason_items[selected_list_index]
+
+        self._application_reason_items = self._get_application_reason_items()
+        self._application_reason_list.delete(0, tk.END)
+
+        for _, part in self._application_reason_items:
+            identifier = self._text_part_identifier(part)
+            label = f"{identifier}: {self._truncate_text(part.text, limit=120)}"
+            self._application_reason_list.insert(tk.END, label)
+
+        if not self._application_reason_items:
+            self._application_reason_list.insert(
+                tk.END, "No application reason text parts configured yet."
+            )
+            self._application_reason_list.configure(state=tk.DISABLED)
+            return
+
+        self._application_reason_list.configure(state=tk.NORMAL)
+
+        selected_index = 0
+        if selected_part is not None:
+            for index, (_, part) in enumerate(self._application_reason_items):
+                if part.text == selected_part.text and part.name == selected_part.name:
+                    selected_index = index
+                    break
+
+        self._application_reason_list.selection_clear(0, tk.END)
+        self._application_reason_list.selection_set(selected_index)
+        self._application_reason_list.activate(selected_index)
+        self._application_reason_list.see(selected_index)
+
+    def _get_selected_application_reason_part(self) -> TextPartNonTech | None:
+        if not self._application_reason_items:
+            return None
+        selected = self._application_reason_list.curselection()
+        selected_index = int(selected[0]) if selected else 0
+        if selected_index < 0 or selected_index >= len(self._application_reason_items):
+            selected_index = 0
+        _, part = self._application_reason_items[selected_index]
+        return part
+
+    def _get_non_tech_parts_for_generation(self) -> list[TextPartNonTech]:
+        selected_application_reason = self._get_selected_application_reason_part()
+        result: list[TextPartNonTech] = []
+        for part in self._get_all_non_tech_parts():
+            if part.text_part_kind == TextPartKind.APPLICATION_REASON:
                 continue
-            grouped.setdefault(part.text_part_kind, []).append((index, part))
-        return grouped
+            result.append(part)
 
-    def _get_intro_parts(self) -> list[TextPartNonTech]:
-        selected = self._get_selected_non_tech_parts(TextPartKind.INTRO)
-        return selected
+        if selected_application_reason is not None:
+            result.append(selected_application_reason)
 
-    def _get_outro_parts(self) -> list[TextPartNonTech]:
-        selected = self._get_selected_non_tech_parts(TextPartKind.OUTRO)
-        return selected
-
-    def _get_selected_non_tech_parts_all(self) -> list[TextPartNonTech]:
-        selected: list[TextPartNonTech] = []
-        for kind in TextPartKind:
-            selected.extend(self._get_selected_non_tech_parts(kind))
-        return selected
-
-    def _get_selected_non_tech_parts(self, kind: TextPartKind) -> list[TextPartNonTech]:
-        selected: list[TextPartNonTech] = []
-        kind_vars = self._selected_non_tech_part_vars.get(kind, {})
-        for index, variable in kind_vars.items():
-            if variable.get() and isinstance(self._text_parts[index], TextPartNonTech):
-                selected.append(self._text_parts[index])
-        return selected
+        return result
 
     def _render_text_part_tech_checkboxes(self, tech_parts: list[tuple[int, TextPartTech]]) -> None:
         for child in self._tech_parts_check_frame.winfo_children():
@@ -495,45 +526,6 @@ class MainWindow:
                 text=label,
                 variable=self._selected_tech_part_vars[index],
             ).pack(anchor=tk.W, padx=6, pady=2)
-
-    def _render_non_tech_checkboxes(
-        self, grouped: dict[TextPartKind, list[tuple[int, TextPartNonTech]]]
-    ) -> None:
-        for child in self._non_tech_check_frame.winfo_children():
-            child.destroy()
-
-        if not grouped:
-            ttk.Label(
-                self._non_tech_check_frame,
-                text="No TextPartNonTech items configured yet.",
-            ).pack(anchor=tk.W, padx=6, pady=6)
-            return
-
-        for kind in TextPartKind:
-            entries = grouped.get(kind, [])
-            if not entries:
-                continue
-
-            kind_frame = ttk.LabelFrame(
-                self._non_tech_check_frame, text=f"{kind.value.title()} options"
-            )
-            kind_frame.pack(fill=tk.X, padx=6, pady=4)
-
-            for index, part in entries:
-                checkbox = ttk.Checkbutton(
-                    kind_frame,
-                    text=f"{self._text_part_identifier(part)}: {self._truncate_text(part.text, limit=100)}",
-                    variable=self._selected_non_tech_part_vars[kind][index],
-                    command=lambda selected_index=index, selected_kind=kind: self._on_non_tech_selected(
-                        selected_kind, selected_index
-                    ),
-                )
-                checkbox.pack(anchor=tk.W, padx=6, pady=2)
-
-    def _on_non_tech_selected(self, kind: TextPartKind, selected_index: int) -> None:
-        kind_vars = self._selected_non_tech_part_vars.get(kind, {})
-        for index, variable in kind_vars.items():
-            variable.set(index == selected_index)
 
     def _truncate_text(self, text: str, limit: int = 80) -> str:
         cleaned = text.replace("\n", " ").strip()
@@ -560,6 +552,56 @@ class MainWindow:
         self._tech_name_var.set(selected.name)
         self._tech_text_parts.delete("1.0", tk.END)
         self._tech_text_parts.insert("1.0", "\n".join(selected.text_parts))
+
+    def _on_tech_drag_start(self, event: tk.Event) -> None:
+        if self._tech_list.size() == 0:
+            self._tech_drag_start_index = None
+            return
+        index = self._tech_list.nearest(event.y)
+        if index < 0:
+            self._tech_drag_start_index = None
+            return
+        self._tech_drag_start_index = index
+
+    def _on_tech_drag_motion(self, event: tk.Event) -> None:
+        if self._tech_drag_start_index is None or self._tech_list.size() == 0:
+            return
+        target_index = self._tech_list.nearest(event.y)
+        if target_index < 0:
+            return
+        self._tech_list.selection_clear(0, tk.END)
+        self._tech_list.selection_set(target_index)
+        self._tech_list.activate(target_index)
+
+    def _on_tech_drag_release(self, event: tk.Event) -> None:
+        if self._tech_drag_start_index is None or self._tech_list.size() == 0:
+            self._tech_drag_start_index = None
+            return
+
+        source_index = self._tech_drag_start_index
+        self._tech_drag_start_index = None
+        target_index = self._tech_list.nearest(event.y)
+        if target_index < 0 or target_index >= len(self._techs):
+            return
+        if source_index == target_index:
+            return
+
+        self._move_tech(source_index, target_index)
+
+    def _move_tech(self, source_index: int, target_index: int) -> None:
+        moved = self._techs.pop(source_index)
+        self._techs.insert(target_index, moved)
+        self._data_store.save_techs(self._techs)
+
+        self._refresh_tech_list()
+        self._tech_list.selection_clear(0, tk.END)
+        self._tech_list.selection_set(target_index)
+        self._tech_list.activate(target_index)
+        self._tech_list.see(target_index)
+
+        self._refresh_text_part_tech_keys()
+        self._refresh_text_part_tech_candidates()
+        self._status_var.set("Tech order updated")
 
     def _on_text_part_selected(self, _event: tk.Event) -> None:
         index = self._get_selected_index(self._text_part_list)
@@ -695,14 +737,6 @@ class MainWindow:
                 match_count += 1
         self._status_var.set(f"Prepared {match_count} matching TextPartTech items")
 
-        # Ensure one non-tech option is selected per kind when options exist.
-        for kind, kind_vars in self._selected_non_tech_part_vars.items():
-            if not kind_vars:
-                continue
-            if not any(var.get() for var in kind_vars.values()):
-                first_index = next(iter(kind_vars))
-                kind_vars[first_index].set(True)
-
         if self._screens:
             self._screens.select(1)
 
@@ -728,21 +762,10 @@ class MainWindow:
     def _on_tech_parts_canvas_configure(self, event: tk.Event) -> None:
         self._tech_parts_canvas.itemconfigure(self._tech_parts_canvas_window, width=event.width)
 
-    def _on_non_tech_frame_configure(self, _event: tk.Event) -> None:
-        self._non_tech_canvas.configure(scrollregion=self._non_tech_canvas.bbox("all"))
-
-    def _on_non_tech_canvas_configure(self, event: tk.Event) -> None:
-        self._non_tech_canvas.itemconfigure(
-            self._non_tech_canvas_window, width=event.width
-        )
-
     def _clear_job_description(self) -> None:
         self._job_description.delete("1.0", tk.END)
         for variable in self._selected_tech_part_vars.values():
             variable.set(False)
-        for kind_vars in self._selected_non_tech_part_vars.values():
-            for variable in kind_vars.values():
-                variable.set(False)
         self._status_var.set("Job description cleared")
 
     def _get_selected_index(self, listbox: tk.Listbox) -> int | None:
@@ -783,7 +806,7 @@ class MainWindow:
                 job_title=self._position_name_var.get().strip(),
                 company=self._position_company_var.get().strip(),
                 tech_parts=selected_tech_parts,
-                non_tech_parts=self._get_selected_non_tech_parts_all(),
+                non_tech_parts=self._get_non_tech_parts_for_generation(),
                 language="english",
             )
             generated_outputs.append(english_text)
@@ -793,14 +816,16 @@ class MainWindow:
                 job_title=self._position_name_var.get().strip(),
                 company=self._position_company_var.get().strip(),
                 tech_parts=selected_tech_parts,
-                non_tech_parts=self._get_selected_non_tech_parts_all(),
+                non_tech_parts=self._get_non_tech_parts_for_generation(),
                 language="french",
             )
             generated_outputs.append(french_text)
 
         text = "\n\n".join(generated_outputs)
+        self._generated_output_with_tags = text
+        display_text = self._strip_bold_tags(text)
         self._output.delete("1.0", tk.END)
-        self._output.insert("1.0", text)
+        self._output.insert("1.0", display_text)
         self._status_var.set("Cover letter generated")
 
         if self._screens:
@@ -814,9 +839,7 @@ class MainWindow:
         self._job_description.delete("1.0", tk.END)
         for variable in self._selected_tech_part_vars.values():
             variable.set(False)
-        for kind_vars in self._selected_non_tech_part_vars.values():
-            for variable in kind_vars.values():
-                variable.set(False)
+        self._generated_output_with_tags = ""
         self._output.delete("1.0", tk.END)
         self._status_var.set("Generator form cleared")
 
@@ -868,7 +891,7 @@ class MainWindow:
         self._status_var.set("Exporting Word...")
         self._root.update()  # Force GUI update
         try:
-            text = self._output.get("1.0", "end-1c")
+            text = self._get_export_source_text()
             if not text:
                 self._status_var.set("No generated text to export")
                 return
@@ -934,7 +957,7 @@ class MainWindow:
         self._status_var.set("Exporting PDF...")
         self._root.update()  # Force GUI update
         try:
-            text = self._output.get("1.0", "end-1c")
+            text = self._get_export_source_text()
             if not text:
                 self._status_var.set("No generated text to export")
                 return
@@ -994,6 +1017,21 @@ class MainWindow:
             self._status_var.set(f"Missing package: {ie}")
         except Exception as e:
             self._status_var.set(f"Export error: {e}")
+
+    def _get_export_source_text(self) -> str:
+        current_output_text = self._output.get("1.0", "end-1c")
+        if not self._generated_output_with_tags:
+            return current_output_text
+
+        generated_without_tags = self._strip_bold_tags(self._generated_output_with_tags)
+        if current_output_text.strip() == generated_without_tags.strip():
+            return self._generated_output_with_tags
+        return current_output_text
+
+    def _strip_bold_tags(self, text: str) -> str:
+        import re
+
+        return re.sub(r"</?b>", "", text, flags=re.IGNORECASE)
 
     def _add_word_runs_with_bold_tags(
         self, paragraph: object, text: str, default_bold: bool = False

@@ -31,7 +31,7 @@
     "kind": "tech",
     "text": "Certified C1 English proficiency (official CEFR test).",
     "name": "",
-    "french_text": "Niveau d'anglais C1 certifi\u00e9 (test officiel du CECR).",
+    "french_text": "Anglais: niveau C1 certifi\u00e9 (test officiel du CECRL).",
     "tech": {
       "name": "C1 English",
       "text_parts": []
@@ -64,20 +64,9 @@
     "kind": "tech",
     "text": "Developed and deployed secure, production-ready full-stack Django/React applications (including usage of Pandas, OpenCV and SQLAlchemy)  Built a Celery-based task scheduler for complex batch execution. Refactored an existing FastAPI back-end, writing unit tests with Pytest.",
     "name": "Python",
-    "french_text": "D\u00e9veloppement et d\u00e9ploiement d\u2019applications full-stack s\u00e9curis\u00e9es et producution-ready avec Django/React (utilisation de Pandas, OpenCV et SQLAlchemy). Mise en place d\u2019un syst\u00e8me de worklow bas\u00e9 sur Celery pour l\u2019ex\u00e9cution de traitements batch complexes. Refactorisation d\u2019un back-end FastAPI existant, avec \u00e9criture de tests unitaires via Pytest.",
+    "french_text": "D\u00e9veloppement et d\u00e9ploiement d\u2019applications full-stack s\u00e9curis\u00e9es et production-ready avec Django/React (utilisation de Pandas, OpenCV et SQLAlchemy). Mise en place d\u2019un syst\u00e8me de workflow bas\u00e9 sur Celery pour l\u2019ex\u00e9cution de traitements batch complexes. Refactorisation d\u2019un back-end FastAPI existant, avec \u00e9criture de tests unitaires via Pytest.",
     "tech": {
       "name": "Python",
-      "text_parts": []
-    },
-    "always_include": false
-  },
-  {
-    "kind": "tech",
-    "text": "Proficient in React, TypeScript, and native JavaScript. Developed modern web applications using React, leveraging tools such as Vite, Redux, and React Hooks, with a reusable and generic component architecture. Implemented end-to-end testing using Cypress. Experience working with Mantine and Material UI as component libraries.",
-    "name": "JavaScript, Typescript, React",
-    "french_text": "Ma\u00eetrise de React, TypeScript et JavaScript natif. D\u00e9veloppement d\u2019applications web modernes avec React, en utilisant notamment Vite, Redux et les React Hooks, avec une architecture de composants r\u00e9utilisables et g\u00e9n\u00e9riques. Mise en place de tests end-to-end avec Cypress. Exp\u00e9rience avec Mantine et Material UI comme biblioth\u00e8ques de composants.",
-    "tech": {
-      "name": "Javascript Typescript",
       "text_parts": []
     },
     "always_include": false
@@ -89,17 +78,6 @@
     "french_text": "D\u00e9veloppement de composants back-end pour un projet IoT, avec la cr\u00e9ation de services personnalis\u00e9s au sein d\u2019une architecture full-stack distribu\u00e9e bas\u00e9e sur Node-RED.",
     "tech": {
       "name": "Node.js",
-      "text_parts": []
-    },
-    "always_include": false
-  },
-  {
-    "kind": "tech",
-    "text": "Implemented test suites across multiple technology stacks. Experience with JUnit, xUnit, Pytest, Google Test, and Cypress.",
-    "name": "Testing",
-    "french_text": "Mise en place de suites de tests sur plusieurs stacks technologiques. Exp\u00e9rience avec JUnit, xUnit, Pytest, Google Test et Cypress.",
-    "tech": {
-      "name": "Testing",
       "text_parts": []
     },
     "always_include": false
@@ -282,37 +260,8 @@
   },
   {
     "kind": "tech",
-    "text": "Use of GitHub Copilot and Claude Code in day-to-day development workflows.Integrated APIs and Large Language Models (LLMs), including the OpenAI API, into software systems. Experience with Azure AI services for text analysis and information extraction.",
-    "name": "AI Integration",
-    "french_text": "Utilisation de GitHub Copilot et de Claude Code dans mon fonctionnement de travail quotidien. Int\u00e9gration d\u2019API et de LLMs, dont l\u2019API OpenAI, dans des syst\u00e8mes logiciels. Exp\u00e9rience avec les services Azure AI pour l\u2019analyse de texte et l\u2019extraction d\u2019informations.",
-    "tech": {
-      "name": "Linux",
-      "text_parts": []
-    },
-    "always_include": false
-  },
-  {
-    "kind": "tech",
-    "text": "Backend development for company SaaS using C#/.NET, experience with Blazor and OpenAPI. Implemented an end-to-end OAuth2 AAA system. Contributed to the developemnt of the main C# ETL library. Experience with Unity.",
-    "name": "C#/.NET",
-    "french_text": "D\u00e9veloppement back-end pour une solution SaaS d\u2019entreprise en C#/.NET, avec exp\u00e9rience sur Blazor et OpenAPI. Mise en place d\u2019un syst\u00e8me AAA OAuth2 complet de bout en bout. Contribution au d\u00e9veloppement de la principale biblioth\u00e8que ETL en C#. Exp\u00e9rience avec Unity.",
-    "tech": {
-      "name": "C# .NET",
-      "text_parts": []
-    },
-    "always_include": false
-  },
-  {
-    "kind": "non_tech",
-    "text_part_kind": "outro",
-    "text": "\nI would welcome the opportunity to discuss how my skills and experience align with the needs of [COMPANY NAME].\n\nPlease do not hesitate to contact me at +32.491.30.71.70 or via email at cyrilgendarme@gmail.com.\n\nThank you for your consideration.\n",
-    "name": "",
-    "french_text": "\nJe serais ravi de pouvoir \u00e9changer avec vous sur la mani\u00e8re dont mes comp\u00e9tences correspondent aux besoins de [COMPANY NAME].\n\nN'h\u00e9sitez pas \u00e0 me contacter au +32.491.30.71.70 ou par e-mail \u00e0 l'adresse cyrilgendarme@gmail.com.\n\nJe vous remercie de l'attention que vous porterez \u00e0 ma candidature.\n"
-  },
-  {
-    "kind": "tech",
     "text": "Experience with API design and integration (REST, GraphQL), microservices architecture, and distributed system development for SaaS products.",
-    "name": "APIs Design",
+    "name": "API Design",
     "french_text": "Exp\u00e9rience en conception et int\u00e9gration d'API (REST, GraphQL), en architecture de microservices et en d\u00e9veloppement de syst\u00e8mes distribu\u00e9s pour des produits SaaS.",
     "tech": {
       "name": "APIs Microservices",
@@ -333,5 +282,67 @@
     "text": "Over the past few years, I have built a versatile profile as a software engineer across multiple industries and technology stacks.\n\nI started as a freelance web developer during my studies, gaining early experience in client communication, requirements analysis, and project delivery.\n\nSince then, I have worked on safety-critical systems, IoT solutions, full-stack applications, and cloud-based tools, with increasing responsibility in system design, architecture, and delivery.\n\nPersonal projects in AI, game development, and automation have further strengthened my ability to take ideas from concept to deployment, combining software engineering, communication, DevOps, and infrastructure skills.\n\n\nIn consideration of the position requirements, I would like to <b>highlight the following experience</b>:",
     "name": "",
     "french_text": "Au cours des derni\u00e8res ann\u00e9es, j\u2019ai d\u00e9velopp\u00e9 un profil polyvalent d\u2019ing\u00e9nieur logiciel en intervenant sur plusieurs secteurs et technologies.\n\nJ\u2019ai d\u00e9but\u00e9 en tant que d\u00e9veloppeur web freelance durant mes \u00e9tudes, ce qui m\u2019a permis d\u2019acqu\u00e9rir une premi\u00e8re exp\u00e9rience en gestion de projet, analyse des besoins, communication client et respect des d\u00e9lais.\n\nPar la suite, j\u2019ai travaill\u00e9 sur des syst\u00e8mes safety-critical, des projets IoT, des applications full-stack et des solutions cloud, avec une responsabilit\u00e9 croissante sur l\u2019architecture, la gestion des livraisons. \n\nMes projets personnels en IA, d\u00e9veloppement de jeux et automatisation ont renforc\u00e9 ma capacit\u00e9 \u00e0 transformer des id\u00e9es en produits concrets, en combinant comp\u00e9tences en ing\u00e9nierie logicielle, communication, DevOps et infrastructure.\n\n\nAu regard des exigences du poste, je souhaite plus particuli\u00e8rement mettre en avant <b>les exp\u00e9riences suivantes</b> :"
+  },
+  {
+    "kind": "tech",
+    "text": "Native French speaker",
+    "name": "",
+    "french_text": "Fran\u00e7ais: langue maternelle",
+    "tech": {
+      "name": "French",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Backend development for company SaaS using C#/.NET, experience with Blazor and OpenAPI. Implemented an end-to-end OAuth2 AAA system. Contributed to the development of the main C# ETL library. Experience with Unity.",
+    "name": "C#/.NET",
+    "french_text": "D\u00e9veloppement back-end pour une solution SaaS d\u2019entreprise en C#/.NET, avec exp\u00e9rience sur Blazor et OpenAPI. Mise en place d\u2019un syst\u00e8me AAA OAuth2 complet de bout en bout. Contribution au d\u00e9veloppement de la principale biblioth\u00e8que ETL en C#. Exp\u00e9rience avec Unity.",
+    "tech": {
+      "name": "C# .NET",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Use of GitHub Copilot and Claude Code in day-to-day development workflows. Integrated APIs and Large Language Models (LLMs), including the OpenAI API, into software systems. Experience with Azure AI services for text analysis and information extraction.",
+    "name": "AI Integration",
+    "french_text": "Utilisation de GitHub Copilot et de Claude Code dans mon fonctionnement de travail quotidien. Int\u00e9gration d\u2019API et de LLMs, dont l\u2019API OpenAI, dans des syst\u00e8mes logiciels. Exp\u00e9rience avec les services Azure AI pour l\u2019analyse de texte et l\u2019extraction d\u2019informations.",
+    "tech": {
+      "name": "AI LLM",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Proficient in React, TypeScript, and native JavaScript. Developed modern web applications using React, leveraging tools such as Vite, Redux, and React Hooks, with a reusable and generic component architecture. Implemented end-to-end tests using Cypress. Experience working with Mantine and Material UI as component libraries.",
+    "name": "JavaScript, Typescript, React",
+    "french_text": "Ma\u00eetrise de React, TypeScript et JavaScript natif. D\u00e9veloppement d\u2019applications web modernes avec React, en utilisant notamment Vite, Redux et les React Hooks, avec une architecture de composants r\u00e9utilisables et g\u00e9n\u00e9riques. Mise en place de tests end-to-end avec Cypress. Exp\u00e9rience avec Mantine et Material UI comme biblioth\u00e8ques de composants.",
+    "tech": {
+      "name": "Javascript Typescript",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Implemented test suites across multiple technology stacks. Experience with JUnit, xUnit, Pytest, GoogleTest, and Cypress.",
+    "name": "Testing",
+    "french_text": "Mise en place de suites de tests sur plusieurs stacks technologiques. Exp\u00e9rience avec JUnit, xUnit, Pytest, Google Test et Cypress.",
+    "tech": {
+      "name": "Testing",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "outro",
+    "text": "\nI would welcome the opportunity to discuss how my skills and experience align with the needs of [COMPANY NAME].\n\nThank you for your consideration.\n",
+    "name": "",
+    "french_text": "\nJe serais ravi de pouvoir \u00e9changer avec vous sur la mani\u00e8re dont mes comp\u00e9tences correspondent aux besoins de [COMPANY NAME].\n\nJe vous remercie de l'attention que vous porterez \u00e0 ma candidature.\n"
   }
 ]
