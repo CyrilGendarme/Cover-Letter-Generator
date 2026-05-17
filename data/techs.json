@@ -128,7 +128,8 @@
       "cloud",
       "Kubernetes",
       "Docker",
-      "Terraform"
+      "Terraform",
+      "git"
     ]
   },
   {
@@ -151,6 +152,14 @@
     "name": "ETL",
     "text_parts": [
       "ETL"
+    ]
+  },
+  {
+    "name": "Signal Processing",
+    "text_parts": [
+      "signal",
+      "audio",
+      "image process"
     ]
   },
   {

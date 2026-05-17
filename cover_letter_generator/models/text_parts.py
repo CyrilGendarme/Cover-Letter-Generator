@@ -9,6 +9,7 @@ class TextPartKind(str, Enum):
 
     INTRO = "intro"
     APPLICATION_REASON = "application_reason"
+    EAGER_TO_RELOCATE = "eager_to_relocate"
     PERSONNAL_PRESENTATION = "personal_presentation"
     OUTRO = "outro"
     SIGNATURE = "signature"

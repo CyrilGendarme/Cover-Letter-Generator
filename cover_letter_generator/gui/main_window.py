@@ -494,11 +494,19 @@ class MainWindow:
         _, part = self._application_reason_items[selected_index]
         return part
 
-    def _get_non_tech_parts_for_generation(self) -> list[TextPartNonTech]:
+    def _get_non_tech_parts_for_generation(
+        self,
+        exclude_eager_to_relocate: bool = False,
+    ) -> list[TextPartNonTech]:
         selected_application_reason = self._get_selected_application_reason_part()
         result: list[TextPartNonTech] = []
         for part in self._get_all_non_tech_parts():
             if part.text_part_kind == TextPartKind.APPLICATION_REASON:
+                continue
+            if (
+                exclude_eager_to_relocate
+                and part.text_part_kind == TextPartKind.EAGER_TO_RELOCATE
+            ):
                 continue
             result.append(part)
 
@@ -791,6 +799,8 @@ class MainWindow:
             self._status_var.set("Select at least one output language")
             return
 
+        is_french_only = include_french and not include_english
+
         selected_tech_parts: list[TextPartTech] = []
         for index, part in self._get_text_part_tech_items():
             if part.always_include:
@@ -816,7 +826,9 @@ class MainWindow:
                 job_title=self._position_name_var.get().strip(),
                 company=self._position_company_var.get().strip(),
                 tech_parts=selected_tech_parts,
-                non_tech_parts=self._get_non_tech_parts_for_generation(),
+                non_tech_parts=self._get_non_tech_parts_for_generation(
+                    exclude_eager_to_relocate=is_french_only
+                ),
                 language="french",
             )
             generated_outputs.append(french_text)
@@ -907,7 +919,7 @@ class MainWindow:
             import re
 
             safe_title = re.sub(r'[<>:"/\\|?*]', "", job_title)
-            filename = f"cover letter - {safe_title} - Cyril Gendarme.docx"
+            filename = f"Cover letter - {safe_title} - Cyril Gendarme.docx"
             export_dir = Path(self._export_directory_var.get())
             export_dir.mkdir(parents=True, exist_ok=True)
             self._data_store.save_export_directory(str(export_dir))
@@ -975,7 +987,7 @@ class MainWindow:
             import re
 
             safe_title = re.sub(r'[<>:"/\\|?*]', "", job_title)
-            filename = f"cover letter - {safe_title} - Cyril Gendarme.pdf"
+            filename = f"Cover letter - {safe_title} - Cyril Gendarme.pdf"
             export_dir = Path(self._export_directory_var.get())
             export_dir.mkdir(parents=True, exist_ok=True)
             self._data_store.save_export_directory(str(export_dir))

@@ -117,17 +117,6 @@
   },
   {
     "kind": "tech",
-    "text": "Contributed to a smart home project using Node-RED, MQTT, and KNX, designing a room security system based on multiple Linux VMs, secure MQTT communication, and hardware sensor integration. Experience in the defense sector working under real-time constraints in safety-critical environments.",
-    "name": "IoT / Embedded development",
-    "french_text": "Contribution \u00e0 un projet de smart home utilisant Node-RED, MQTT et KNX, avec la conception d\u2019un syst\u00e8me de s\u00e9curit\u00e9 de salle bas\u00e9 sur plusieurs VM Linux, des communications MQTT s\u00e9curis\u00e9es et l\u2019int\u00e9gration de capteurs mat\u00e9riels. Exp\u00e9rience dans le secteur de la d\u00e9fense, en travaillant dans un environnement safety-critical \u00e0 contraintes temps r\u00e9el.",
-    "tech": {
-      "name": "IoT Embedded",
-      "text_parts": []
-    },
-    "always_include": false
-  },
-  {
-    "kind": "tech",
     "text": "Experience working with ERP, including custom Odoo development for business process management, Atlassian suite (Jira, Confluence) for project tracking and documentation, and Slack for workflow coordination.",
     "name": "ERP / Odoo",
     "french_text": "Exp\u00e9rience de travail avec des ERP, incluant du d\u00e9veloppement Odoo personnalis\u00e9 pour la gestion des processus m\u00e9tiers, la suite Atlassian (Jira, Confluence) pour le suivi de projets et la documentation, ainsi que Slack pour la coordination des workflows.",
@@ -344,5 +333,41 @@
     "text": "\nI would welcome the opportunity to discuss how my skills and experience align with the needs of [COMPANY NAME].\n\nThank you for your consideration.\n",
     "name": "",
     "french_text": "\nJe serais ravi de pouvoir \u00e9changer avec vous sur la mani\u00e8re dont mes comp\u00e9tences correspondent aux besoins de [COMPANY NAME].\n\nJe vous remercie de l'attention que vous porterez \u00e0 ma candidature.\n"
+  },
+  {
+    "kind": "tech",
+    "text": "Contributed to a smart home project using Node-RED, MQTT, and KNX, designing a room security system based on multiple Linux VMs, secure MQTT communication, and hardware sensor integration. Experience in the defense sector working under real-time constraints in safety-critical environments. Exposure to FreeRTOS and Yocto.",
+    "name": "IoT / Embedded development",
+    "french_text": "Contribution \u00e0 un projet de smart home utilisant Node-RED, MQTT et KNX, avec la conception d\u2019un syst\u00e8me de s\u00e9curit\u00e9 de salle bas\u00e9 sur plusieurs VM Linux, des communications MQTT s\u00e9curis\u00e9es et l\u2019int\u00e9gration de capteurs mat\u00e9riels. Exp\u00e9rience dans le secteur de la d\u00e9fense, en travaillant dans un environnement safety-critical \u00e0 contraintes temps r\u00e9el. Compr\u00e9hension pratique de FreeRTOS et Yocto.",
+    "tech": {
+      "name": "IoT Embedded",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "tech",
+    "text": "Experience with digital signal processing concepts applied to audio and image data, including filtering, transformation techniques, and feature extraction in software-based systems.",
+    "name": "Signal Processing",
+    "french_text": "Maitrise des concepts de traitement num\u00e9rique du signal appliqu\u00e9s aux donn\u00e9es audio et vid\u00e9o, notamment le filtrage, les techniques de transformation et l'extraction de caract\u00e9ristiques.",
+    "tech": {
+      "name": "Signal Processing",
+      "text_parts": []
+    },
+    "always_include": false
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "eager_to_relocate",
+    "text": "Being based in Li\u00e8ge (Belgium), I understand that this position would require relocation, and I am fully open and enthusiastic about it.",
+    "name": "",
+    "french_text": "\u00c9tant bas\u00e9 \u00e0 Li\u00e8ge (Belgique), je comprends que ce poste n\u00e9cessiterait un d\u00e9m\u00e9nagement, et je suis tout \u00e0 fait ouvert \u00e0 cette id\u00e9e."
+  },
+  {
+    "kind": "non_tech",
+    "text_part_kind": "application_reason",
+    "text": "With a strong passion for electronic music, I am naturally drawn to the opportunity to collaborate with you. I have developed knowledge of modulation techniques, MIDI control, audio signal processing, and various software and hardware aspects of music production. I truly believe that my professional experience, combined with skills developed through personal music-related projects, makes me a strong fit for this position.",
+    "name": "music industry",
+    "french_text": "Anim\u00e9 par une grande passion pour la musique \u00e9lectronique, je suis tout naturellement attir\u00e9 par l'opportunit\u00e9 de collaborer avec vous. J'ai acquis des connaissances en techniques de modulation, en contr\u00f4le MIDI, en traitement du signal audio, ainsi que dans divers aspects logiciels et mat\u00e9riels de la production musicale. Je suis convaincu que mon exp\u00e9rience professionnelle, combin\u00e9e aux comp\u00e9tences acquises dans le cadre de projets musicaux personnels, fait de moi le candidat id\u00e9al pour ce poste."
   }
 ]
