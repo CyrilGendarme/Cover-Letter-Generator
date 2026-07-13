@@ -16,6 +16,7 @@ from cover_letter_generator.services.json_data_store import JsonDataStore
 
 class MainWindow:
     """Builds and manages the main application window."""
+    _PAGE_BREAK_MARKER = "__PAGE_BREAK__"
 
     def __init__(self, service: CoverLetterService, data_store: JsonDataStore) -> None:
         self._service = service
@@ -60,7 +61,9 @@ class MainWindow:
         main = ttk.Frame(self._root, padding=16)
         main.pack(fill=tk.BOTH, expand=True)
 
-        title = ttk.Label(main, text="Cover Letter Generator", font=("Segoe UI", 20, "bold"))
+        title = ttk.Label(
+            main, text="Cover Letter Generator", font=("Segoe UI", 20, "bold")
+        )
         title.pack(anchor=tk.W)
 
         subtitle = ttk.Label(
@@ -106,14 +109,20 @@ class MainWindow:
         parent.columnconfigure(0, weight=1)
         parent.rowconfigure(1, weight=1)
 
-        ttk.Label(parent, text="Paste job description").grid(row=0, column=0, sticky=tk.W)
+        ttk.Label(parent, text="Paste job description").grid(
+            row=0, column=0, sticky=tk.W
+        )
         self._job_description = tk.Text(parent, height=12, wrap=tk.WORD)
         self._job_description.grid(row=1, column=0, sticky=tk.NSEW, pady=(4, 8))
 
         actions = ttk.Frame(parent)
         actions.grid(row=2, column=0, sticky=tk.W, pady=(0, 8))
-        ttk.Button(actions, text="Prepare matches", command=self._prepare_text_part_matches).pack(side=tk.LEFT)
-        ttk.Button(actions, text="Clear", command=self._clear_job_description).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(
+            actions, text="Prepare matches", command=self._prepare_text_part_matches
+        ).pack(side=tk.LEFT)
+        ttk.Button(actions, text="Clear", command=self._clear_job_description).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
 
     def _build_screen_generation_setup(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(1, weight=1)
@@ -121,7 +130,9 @@ class MainWindow:
         parent.rowconfigure(4, weight=1)
 
         self._add_labeled_entry(parent, "Job title", self._position_name_var, row=0)
-        self._add_labeled_entry(parent, "Company name", self._position_company_var, row=1)
+        self._add_labeled_entry(
+            parent, "Company name", self._position_company_var, row=1
+        )
 
         ttk.Label(parent, text="Output language(s)").grid(
             row=2, column=0, sticky=tk.W, padx=(0, 8), pady=4
@@ -147,17 +158,27 @@ class MainWindow:
         tech_parts_frame.columnconfigure(0, weight=1)
         tech_parts_frame.rowconfigure(0, weight=1)
 
-        self._tech_parts_canvas = tk.Canvas(tech_parts_frame, borderwidth=0, highlightthickness=0)
+        self._tech_parts_canvas = tk.Canvas(
+            tech_parts_frame, borderwidth=0, highlightthickness=0
+        )
         self._tech_parts_canvas.grid(row=0, column=0, sticky=tk.NSEW)
 
-        tech_parts_scrollbar = ttk.Scrollbar(tech_parts_frame, orient=tk.VERTICAL, command=self._tech_parts_canvas.yview)
+        tech_parts_scrollbar = ttk.Scrollbar(
+            tech_parts_frame, orient=tk.VERTICAL, command=self._tech_parts_canvas.yview
+        )
         tech_parts_scrollbar.grid(row=0, column=1, sticky=tk.NS)
         self._tech_parts_canvas.configure(yscrollcommand=tech_parts_scrollbar.set)
 
         self._tech_parts_check_frame = ttk.Frame(self._tech_parts_canvas)
-        self._tech_parts_canvas_window = self._tech_parts_canvas.create_window((0, 0), window=self._tech_parts_check_frame, anchor="nw")
-        self._tech_parts_check_frame.bind("<Configure>", self._on_tech_parts_frame_configure)
-        self._tech_parts_canvas.bind("<Configure>", self._on_tech_parts_canvas_configure)
+        self._tech_parts_canvas_window = self._tech_parts_canvas.create_window(
+            (0, 0), window=self._tech_parts_check_frame, anchor="nw"
+        )
+        self._tech_parts_check_frame.bind(
+            "<Configure>", self._on_tech_parts_frame_configure
+        )
+        self._tech_parts_canvas.bind(
+            "<Configure>", self._on_tech_parts_canvas_configure
+        )
 
         ttk.Label(parent, text="Application reason").grid(
             row=4, column=0, sticky=tk.NW, padx=(0, 8), pady=4
@@ -190,8 +211,12 @@ class MainWindow:
 
         actions = ttk.Frame(parent)
         actions.grid(row=5, column=1, sticky=tk.W, pady=(8, 0))
-        ttk.Button(actions, text="Refresh matches", command=self._prepare_text_part_matches).pack(side=tk.LEFT)
-        ttk.Button(actions, text="Generate text", command=self._on_generate).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(
+            actions, text="Refresh matches", command=self._prepare_text_part_matches
+        ).pack(side=tk.LEFT)
+        ttk.Button(actions, text="Generate text", command=self._on_generate).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
 
     def _build_screen_output(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(0, weight=1)
@@ -203,8 +228,12 @@ class MainWindow:
         actions = ttk.Frame(parent)
         actions.grid(row=1, column=0, sticky=tk.W, pady=(8, 0))
         ttk.Button(actions, text="Copy", command=self._copy_output).pack(side=tk.LEFT)
-        ttk.Button(actions, text="Export Word", command=self._export_word).pack(side=tk.LEFT, padx=(6, 0))
-        ttk.Button(actions, text="Export PDF", command=self._export_pdf).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(actions, text="Export Word", command=self._export_word).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
+        ttk.Button(actions, text="Export PDF", command=self._export_pdf).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
 
     def _build_configuration_tab(self, parent: ttk.Frame) -> None:
         parent.columnconfigure(0, weight=1)
@@ -246,24 +275,38 @@ class MainWindow:
         parent.rowconfigure(0, weight=1)
 
         self._tech_list = tk.Listbox(parent, exportselection=False)
-        self._tech_list.grid(row=0, column=0, columnspan=2, sticky=tk.NSEW, padx=8, pady=(8, 4))
+        self._tech_list.grid(
+            row=0, column=0, columnspan=2, sticky=tk.NSEW, padx=8, pady=(8, 4)
+        )
         self._tech_list.bind("<<ListboxSelect>>", self._on_tech_selected)
         self._tech_list.bind("<ButtonPress-1>", self._on_tech_drag_start)
         self._tech_list.bind("<B1-Motion>", self._on_tech_drag_motion)
         self._tech_list.bind("<ButtonRelease-1>", self._on_tech_drag_release)
 
         ttk.Label(parent, text="Name").grid(row=1, column=0, sticky=tk.W, padx=8)
-        ttk.Entry(parent, textvariable=self._tech_name_var).grid(row=2, column=0, columnspan=2, sticky=tk.EW, padx=8)
+        ttk.Entry(parent, textvariable=self._tech_name_var).grid(
+            row=2, column=0, columnspan=2, sticky=tk.EW, padx=8
+        )
 
-        ttk.Label(parent, text="Associated text parts (one per line)").grid(row=3, column=0, sticky=tk.W, padx=8, pady=(8, 0))
+        ttk.Label(parent, text="Associated text parts (one per line)").grid(
+            row=3, column=0, sticky=tk.W, padx=8, pady=(8, 0)
+        )
         self._tech_text_parts = tk.Text(parent, height=8, wrap=tk.WORD)
-        self._tech_text_parts.grid(row=4, column=0, columnspan=2, sticky=tk.EW, padx=8, pady=(2, 8))
+        self._tech_text_parts.grid(
+            row=4, column=0, columnspan=2, sticky=tk.EW, padx=8, pady=(2, 8)
+        )
 
         buttons = ttk.Frame(parent)
         buttons.grid(row=5, column=0, columnspan=2, sticky=tk.W, padx=8, pady=(0, 8))
-        ttk.Button(buttons, text="Load", command=self._load_configuration).pack(side=tk.LEFT)
-        ttk.Button(buttons, text="Add / Modify", command=self._on_upsert_tech).pack(side=tk.LEFT, padx=(6, 0))
-        ttk.Button(buttons, text="Remove", command=self._on_remove_tech).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(buttons, text="Load", command=self._load_configuration).pack(
+            side=tk.LEFT
+        )
+        ttk.Button(buttons, text="Add / Modify", command=self._on_upsert_tech).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
+        ttk.Button(buttons, text="Remove", command=self._on_remove_tech).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
 
     def _build_text_part_editor(self, parent: ttk.LabelFrame) -> None:
         parent.columnconfigure(0, weight=1)
@@ -357,9 +400,15 @@ class MainWindow:
 
         buttons = ttk.Frame(parent)
         buttons.grid(row=10, column=0, sticky=tk.W, padx=8, pady=(0, 8))
-        ttk.Button(buttons, text="Load", command=self._load_configuration).pack(side=tk.LEFT)
-        ttk.Button(buttons, text="Add / Modify", command=self._on_upsert_text_part).pack(side=tk.LEFT, padx=(6, 0))
-        ttk.Button(buttons, text="Remove", command=self._on_remove_text_part).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(buttons, text="Load", command=self._load_configuration).pack(
+            side=tk.LEFT
+        )
+        ttk.Button(
+            buttons, text="Add / Modify", command=self._on_upsert_text_part
+        ).pack(side=tk.LEFT, padx=(6, 0))
+        ttk.Button(buttons, text="Remove", command=self._on_remove_text_part).pack(
+            side=tk.LEFT, padx=(6, 0)
+        )
         self._toggle_text_part_association_inputs()
 
     def _load_configuration(self) -> None:
@@ -386,17 +435,21 @@ class MainWindow:
     def _refresh_text_part_tech_candidates(self) -> None:
         tech_parts = self._get_checkable_text_part_tech_items()
         current_states = {
-            index: variable.get() for index, variable in self._selected_tech_part_vars.items()
+            index: variable.get()
+            for index, variable in self._selected_tech_part_vars.items()
         }
         self._selected_tech_part_vars = {
-            index: tk.BooleanVar(value=current_states.get(index, False)) for index, _part in tech_parts
+            index: tk.BooleanVar(value=current_states.get(index, False))
+            for index, _part in tech_parts
         }
         self._render_text_part_tech_checkboxes(tech_parts)
 
     def _refresh_tech_list(self) -> None:
         self._tech_list.delete(0, tk.END)
         for tech in self._techs:
-            self._tech_list.insert(tk.END, f"{tech.name} ({len(tech.text_parts)} text parts)")
+            self._tech_list.insert(
+                tk.END, f"{tech.name} ({len(tech.text_parts)} text parts)"
+            )
 
     def _refresh_text_part_list(self) -> None:
         self._text_part_list.delete(0, tk.END)
@@ -515,7 +568,9 @@ class MainWindow:
 
         return result
 
-    def _render_text_part_tech_checkboxes(self, tech_parts: list[tuple[int, TextPartTech]]) -> None:
+    def _render_text_part_tech_checkboxes(
+        self, tech_parts: list[tuple[int, TextPartTech]]
+    ) -> None:
         for child in self._tech_parts_check_frame.winfo_children():
             child.destroy()
 
@@ -641,7 +696,9 @@ class MainWindow:
             self._status_var.set("Tech name is required")
             return
         text_parts = self._read_non_empty_lines(self._tech_text_parts)
-        result = self._data_store.upsert_tech_by_name(Tech(name=name, text_parts=text_parts))
+        result = self._data_store.upsert_tech_by_name(
+            Tech(name=name, text_parts=text_parts)
+        )
         self._load_configuration()
         self._status_var.set(f"{result.capitalize()} tech by key '{name}'")
 
@@ -732,7 +789,11 @@ class MainWindow:
             self._status_var.set("Could not remove selected text part")
 
     def _read_non_empty_lines(self, widget: tk.Text) -> list[str]:
-        return [line.strip() for line in widget.get("1.0", tk.END).splitlines() if line.strip()]
+        return [
+            line.strip()
+            for line in widget.get("1.0", tk.END).splitlines()
+            if line.strip()
+        ]
 
     def _prepare_text_part_matches(self) -> None:
         job_description = self._job_description.get("1.0", tk.END).strip().lower()
@@ -748,7 +809,9 @@ class MainWindow:
         if self._screens:
             self._screens.select(1)
 
-    def _matches_job_description(self, job_description: str, part: TextPartTech) -> bool:
+    def _matches_job_description(
+        self, job_description: str, part: TextPartTech
+    ) -> bool:
         if not job_description:
             return False
 
@@ -765,10 +828,14 @@ class MainWindow:
         return False
 
     def _on_tech_parts_frame_configure(self, _event: tk.Event) -> None:
-        self._tech_parts_canvas.configure(scrollregion=self._tech_parts_canvas.bbox("all"))
+        self._tech_parts_canvas.configure(
+            scrollregion=self._tech_parts_canvas.bbox("all")
+        )
 
     def _on_tech_parts_canvas_configure(self, event: tk.Event) -> None:
-        self._tech_parts_canvas.itemconfigure(self._tech_parts_canvas_window, width=event.width)
+        self._tech_parts_canvas.itemconfigure(
+            self._tech_parts_canvas_window, width=event.width
+        )
 
     def _clear_job_description(self) -> None:
         self._job_description.delete("1.0", tk.END)
@@ -789,8 +856,12 @@ class MainWindow:
         variable: tk.StringVar,
         row: int,
     ) -> None:
-        ttk.Label(parent, text=label).grid(row=row, column=0, sticky=tk.W, padx=(0, 8), pady=4)
-        ttk.Entry(parent, textvariable=variable).grid(row=row, column=1, sticky=tk.EW, pady=4)
+        ttk.Label(parent, text=label).grid(
+            row=row, column=0, sticky=tk.W, padx=(0, 8), pady=4
+        )
+        ttk.Entry(parent, textvariable=variable).grid(
+            row=row, column=1, sticky=tk.EW, pady=4
+        )
 
     def _on_generate(self) -> None:
         include_english = self._include_english_var.get()
@@ -831,6 +902,8 @@ class MainWindow:
                 ),
                 language="french",
             )
+            if include_french and include_english:
+                generated_outputs.append(self._PAGE_BREAK_MARKER)
             generated_outputs.append(french_text)
 
         text = "\n\n".join(generated_outputs)
@@ -935,6 +1008,10 @@ class MainWindow:
             import re as regex_module
 
             for line in text.split("\n"):
+                if line == self._PAGE_BREAK_MARKER:
+                    doc.add_page_break()
+                    continue
+
                 p = doc.add_paragraph()
                 p.paragraph_format.space_before = Pt(0)
                 p.paragraph_format.space_after = Pt(0)
@@ -981,7 +1058,12 @@ class MainWindow:
 
             from reportlab.lib.pagesizes import A4
             from reportlab.lib.units import inch
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+            from reportlab.platypus import (
+                SimpleDocTemplate,
+                Paragraph,
+                Spacer,
+                PageBreak,
+            )
             from reportlab.lib.styles import getSampleStyleSheet
             from pathlib import Path
             import re
@@ -1012,9 +1094,11 @@ class MainWindow:
             )
 
             story = []
-            import re as regex_module
 
             for line in text.split("\n"):
+                if line == self._PAGE_BREAK_MARKER:
+                    story.append(PageBreak())
+                    continue
                 if line == "":
                     story.append(Spacer(1, custom_style.leading))
                     continue
@@ -1043,7 +1127,8 @@ class MainWindow:
     def _strip_bold_tags(self, text: str) -> str:
         import re
 
-        return re.sub(r"</?b>", "", text, flags=re.IGNORECASE)
+        without_bold_tags = re.sub(r"</?b>", "", text, flags=re.IGNORECASE)
+        return without_bold_tags.replace(self._PAGE_BREAK_MARKER, "")
 
     def _add_word_runs_with_bold_tags(
         self, paragraph: object, text: str, default_bold: bool = False
